@@ -15,7 +15,7 @@ namespace Morabaraba_9001
     }
     public interface ICell
     {
-        CellState getState { get; }
+        Player getOwner { get; }
         void changeState(CellState changedState);
         bool isMovable();
         bool isInMill();
@@ -168,7 +168,8 @@ namespace Morabaraba_9001
     }
     public class PowerLevel9000Cow : ICell
     {
-        public CellState getState => throw new NotImplementedException();
+        Player owner;
+        public Player getOwner => owner;
 
         public void changeState(CellState changedState)
         {
