@@ -160,39 +160,7 @@ namespace Morabaraba_9001
             throw new NotImplementedException();
         }
     }
-    public class PowerLevel9000Cow : ICell
-    {
-        CellState state;
-        public CellState getState => state;
-
-        Player owner;
-        public Player getOwner => owner;
-
-        public void changeState(CellState changedState)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string getPosition()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isInMill()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isMovable()
-        {
-            throw new NotImplementedException();
-        }
-
-        virtual public void Move(string movePos)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    
 
     public class MorabarabaManager : IGameManager
     {
