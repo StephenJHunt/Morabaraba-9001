@@ -126,19 +126,18 @@ namespace Morabaraba_9001
 
         public string getMove(string prompt)
         {
+            string input;
             while (true)
             {
                 Console.Write(prompt);
-                string input = Console.ReadLine();
-
+                input = Console.ReadLine().ToUpper();
+                if(board.ContainsKey(input))
+                {
+                    break;
+                }
+                Console.WriteLine("Please choose a valid position. you'll get snuggles ^w^ :3");
             }
-            return null; while (true)
-            {
-                Console.Write(prompt);
-                string input = Console.ReadLine();
-
-            }
-            return null;
+            return input; 
         }
 
         public List<Cell> getNeighbours(Cell cell)
