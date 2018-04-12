@@ -10,6 +10,7 @@ namespace Morabaraba_9001
         void Move(string piecePos, string movePos);
         void Shoot(string shootPos);
         List<Cell> getNeighbours(Cell cell);
+        Cell getCell(string pos);
     }
     
     public interface ICell
@@ -97,7 +98,7 @@ namespace Morabaraba_9001
             { "G7", new List<string> { "G4", "F6", "D7" } }
            
         };
-        Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+        Dictionary<string, Cell> board = new Dictionary<string, Cell>();
         public Board()
         {
             string[] positions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
@@ -119,10 +120,20 @@ namespace Morabaraba_9001
             return playerCells;
         }
 
+        public Cell getCell(string pos)
+        {
+            return board[pos];
+        }
+
         public List<Cell> getNeighbours(Cell cell)
         {
-            List<Cell> neighbours = new List<Cell>();
+            List<Cell> neighbourList = new List<Cell>();
 
+            foreach (string pos in neighbours[cell.getPosition()])
+            {
+                neighbourList.Add(getCell(pos));
+            }
+            return neighbourList;
         }
 
         public void Move(string piecePos, string movePos)
