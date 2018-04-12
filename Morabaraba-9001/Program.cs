@@ -5,24 +5,21 @@ namespace Morabaraba_9001
 {
     public interface IBoard
     {
-        ICow occupant(string pos);
+        ICell occupant(string pos);
         IEnumerable<int> Cows(Player player);
         void Move(string piecePos, string movePos);
         void Shoot(string shootPos);
         void makeFlying(Player player);
     }
-    public interface ICow
-    {
-        bool isMovable();
-        bool isInMill();
-        void Move(string movePos);
-        string getPosition();
-        CowStatus GetStatus();
-    }
+    
     public interface ICell
     {
         CellState getState { get; }
         void changeState(CellState changedState);
+        bool isMovable();
+        bool isInMill();
+        void Move(string movePos);
+        string getPosition();
     }
     public interface IPlayer
     {
@@ -32,7 +29,6 @@ namespace Morabaraba_9001
     }
     public enum Player { X, O }
     public enum CellState { Occupied, Empty }
-    public enum CowStatus {Unplaced, Placed, Flying, Shot}
     public interface IGameManager
     {
         void startGame();
@@ -44,11 +40,12 @@ namespace Morabaraba_9001
     public class invalidMoveException : ApplicationException { }
     public class Cell : ICell
     {
-        public CellState getState => throw new NotImplementedException();
+        CellState state;
+        public CellState getState => state;
 
         public void changeState(CellState changedState)
         {
-            throw new NotImplementedException();
+            state = changedState;
         }
     }
     public class Board : IBoard
@@ -64,7 +61,10 @@ namespace Morabaraba_9001
         }
         public IEnumerable<int> Cows(Player player)
         {
-            throw new NotImplementedException();
+            foreach ()
+            {
+
+            }
         }
 
         public void makeFlying(Player player)
@@ -77,7 +77,7 @@ namespace Morabaraba_9001
             throw new NotImplementedException();
         }
 
-        public ICow occupant(string pos)
+        public ICell occupant(string pos)
         {
             throw new NotImplementedException();
         }
@@ -87,14 +87,16 @@ namespace Morabaraba_9001
             throw new NotImplementedException();
         }
     }
-    public class PowerLevel9000Cow : ICow
+    public class PowerLevel9000Cow : ICell
     {
-        public string getPosition()
+        public CellState getState => throw new NotImplementedException();
+
+        public void changeState(CellState changedState)
         {
             throw new NotImplementedException();
         }
 
-        public CowStatus GetStatus()
+        public string getPosition()
         {
             throw new NotImplementedException();
         }
@@ -114,13 +116,7 @@ namespace Morabaraba_9001
             throw new NotImplementedException();
         }
     }
-    public class FlyingPowerLevel9001Cow : PowerLevel9000Cow
-    {
-        public override void Move(string movePos)
-        {
-            throw new NotImplementedException();
-        }
-    }
+
     public class MorabarabaManager : IGameManager
     {
         public void endGame()
