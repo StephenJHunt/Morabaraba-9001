@@ -6,10 +6,9 @@ namespace Morabaraba_9001
     public interface IBoard
     {
         ICell occupant(string pos);
-        IEnumerable<int> Cows(Player player);
+        List<Cell> Cows(CellState player);
         void Move(string piecePos, string movePos);
         void Shoot(string shootPos);
-        void makeFlying(Player player);
     }
     
     public interface ICell
@@ -27,8 +26,8 @@ namespace Morabaraba_9001
         string getMove(string prompt);
 
     }
-    public enum Player { X, O }
     public enum CellState { X, O, Empty }
+    public enum Player { X, O }
     public interface IGameManager
     {
         void startGame();
@@ -79,22 +78,19 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
-        public List<int> Cows(Player player)
+        public List<Cell> Cows(CellState player)
         {
             List<Cell> playerCells = new List<Cell>();
-            foreach (ICell cell in board.Values)
+            foreach (Cell cell in board.Values)
             {
-                if (cell.getState)
+                if (cell.getState == player)
                 {
-
+                    playerCells.Add(cell);
                 }
             }
+            return playerCells;
         }
-
-        public void makeFlying(Player player)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public void Move(string piecePos, string movePos)
         {
