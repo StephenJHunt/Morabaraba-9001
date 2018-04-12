@@ -28,7 +28,7 @@ namespace Morabaraba_9001
 
     }
     public enum Player { X, O }
-    public enum CellState { Occupied, Empty }
+    public enum CellState { X, O, Empty }
     public interface IGameManager
     {
         void startGame();
@@ -47,6 +47,26 @@ namespace Morabaraba_9001
         {
             state = changedState;
         }
+
+        public string getPosition()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool isInMill()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool isMovable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Move(string movePos)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class Board : IBoard
     {
@@ -59,11 +79,15 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
-        public IEnumerable<int> Cows(Player player)
+        public List<int> Cows(Player player)
         {
-            foreach ()
+            List<Cell> playerCells = new List<Cell>();
+            foreach (ICell cell in board.Values)
             {
+                if (cell.getState)
+                {
 
+                }
             }
         }
 
@@ -141,7 +165,8 @@ namespace Morabaraba_9001
     }
     public class GamePlayer : IPlayer
     {
-        public Player player => throw new NotImplementedException();
+        Player gameplayer;
+        public Player player => gameplayer;
 
         public string getMove(string prompt)
         {
