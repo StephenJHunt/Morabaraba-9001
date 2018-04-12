@@ -5,17 +5,16 @@ namespace Morabaraba_9001
 {
     public interface IBoard
     {
-        ICell occupant(string pos);
-        List<Cell> Cows(CellState player);
+        List<ICell> Cows(CellState player);
         void Move(string piecePos, string movePos);
         void Shoot(string shootPos);
-        List<Cell> getNeighbours(Cell cell);
-        Cell getCell(string pos);
+        List<ICell> getNeighbours(ICell cell);
+        ICell getCell(string pos);
         string getMove(string prompt);
     }
     public interface ICell
     {
-        Player getOwner { get; }
+        CellState getState { get; }
         void changeState(CellState changedState);
         bool isMovable();
         bool isInMill();
@@ -97,7 +96,7 @@ namespace Morabaraba_9001
             { "G7", new List<string> { "G4", "F6", "D7" } }
            
         };
-        Dictionary<string, Cell> board = new Dictionary<string, Cell>();
+        Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
         {
             string[] positions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
@@ -106,10 +105,10 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
-        public List<Cell> Cows(CellState player)
+        public List<ICell> Cows(CellState player)
         {
-            List<Cell> playerCells = new List<Cell>();
-            foreach (Cell cell in board.Values)
+            List<ICell> playerCells = new List<ICell>();
+            foreach (ICell cell in board.Values)
             {
                 if (cell.getState == player)
                 {
@@ -119,7 +118,7 @@ namespace Morabaraba_9001
             return playerCells;
         }
 
-        public Cell getCell(string pos)
+        public ICell getCell(string pos)
         {
             return board[pos];
         }
@@ -140,9 +139,9 @@ namespace Morabaraba_9001
             return input; 
         }
 
-        public List<Cell> getNeighbours(Cell cell)
+        public List<ICell> getNeighbours(ICell cell)
         {
-            List<Cell> neighbourList = new List<Cell>();
+            List<ICell> neighbourList = new List<ICell>();
 
             foreach (string pos in neighbours[cell.getPosition()])
             {
@@ -155,12 +154,7 @@ namespace Morabaraba_9001
         {
             throw new NotImplementedException();
         }
-
-        public ICell occupant(string pos)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void Shoot(string shootPos)
         {
             throw new NotImplementedException();
@@ -168,6 +162,9 @@ namespace Morabaraba_9001
     }
     public class PowerLevel9000Cow : ICell
     {
+        CellState state;
+        public CellState getState => state;
+
         Player owner;
         public Player getOwner => owner;
 
