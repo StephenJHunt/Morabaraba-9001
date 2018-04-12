@@ -11,8 +11,8 @@ namespace Morabaraba_9001
         void Shoot(string shootPos);
         List<Cell> getNeighbours(Cell cell);
         Cell getCell(string pos);
+        string getMove(string prompt);
     }
-    
     public interface ICell
     {
         CellState getState { get; }
@@ -25,7 +25,6 @@ namespace Morabaraba_9001
     public interface IPlayer
     {
         Player player { get; }
-        string getMove(string prompt);
 
     }
     public enum CellState { X, O, Empty }
@@ -125,6 +124,23 @@ namespace Morabaraba_9001
             return board[pos];
         }
 
+        public string getMove(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine();
+
+            }
+            return null; while (true)
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine();
+
+            }
+            return null;
+        }
+
         public List<Cell> getNeighbours(Cell cell)
         {
             List<Cell> neighbourList = new List<Cell>();
@@ -207,11 +223,6 @@ namespace Morabaraba_9001
     {
         Player gameplayer;
         public Player player => gameplayer;
-
-        public string getMove(string prompt)
-        {
-            throw new NotImplementedException();
-        }
     }
     class Program
     {
