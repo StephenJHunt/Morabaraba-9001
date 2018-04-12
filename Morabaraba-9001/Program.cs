@@ -9,6 +9,7 @@ namespace Morabaraba_9001
         List<Cell> Cows(CellState player);
         void Move(string piecePos, string movePos);
         void Shoot(string shootPos);
+        List<Cell> getNeighbours(Cell cell);
     }
     
     public interface ICell
@@ -69,6 +70,33 @@ namespace Morabaraba_9001
     }
     public class Board : IBoard
     {
+        Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
+            { "A1", new List<string> { "A4", "D1", "B2" } },
+            { "A4", new List<string> { "A1", "B4", "A7" } },
+            { "A7", new List<string> { "A4", "B6", "D7" } },
+            { "B2", new List<string> { "A1", "D2", "C3", "B4" } },
+            { "B4", new List<string> { "B2", "A4", "C4", "B6" } },
+            { "B6", new List<string> { "B4", "C5", "D6", "A7" } },
+            { "C3", new List<string> { "B2", "C4", "D3" } },
+            { "C4", new List<string> { "C3", "B4", "C5" } },
+            { "C5", new List<string> { "C4", "D5", "B6" } },
+            { "D1", new List<string> { "A1", "G1", "D2" } },
+            { "D2", new List<string> { "D1", "F2", "D3", "B2" } },
+            { "D3", new List<string> { "D2", "E3", "C3" } },
+            { "D5", new List<string> { "E5", "D6", "C5" } },
+            { "D6", new List<string> { "D5", "F6", "D7", "B6" } },
+            { "D7", new List<string> { "D6", "G7", "A7" } },
+            { "E3", new List<string> { "F2", "E4", "D3" } },
+            { "E4", new List<string> { "E3", "F4", "E5" } },
+            { "E5", new List<string> { "E4", "F6", "D5" } },
+            { "F2", new List<string> { "G1", "F4", "E3", "D2" } },
+            { "F4", new List<string> { "F2", "G4", "F6", "E4" } },
+            { "F6", new List<string> { "F4", "G7", "D6", "E5" } },
+            { "G1", new List<string> { "D1", "G4", "F2" } },
+            { "G4", new List<string> { "G1", "F4", "G7" } },
+            { "G7", new List<string> { "G4", "F6", "D7" } }
+           
+        };
         Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
         {
@@ -90,7 +118,12 @@ namespace Morabaraba_9001
             }
             return playerCells;
         }
-        
+
+        public List<Cell> getNeighbours(Cell cell)
+        {
+            List<Cell> neighbours = new List<Cell>();
+
+        }
 
         public void Move(string piecePos, string movePos)
         {
