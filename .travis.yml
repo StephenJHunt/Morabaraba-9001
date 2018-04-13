@@ -7,4 +7,4 @@ matrix:
   include:
 	- dotnet: 2.1.4
 	- dotnet: 2.0.0
-               os: osx
+       os: osx
