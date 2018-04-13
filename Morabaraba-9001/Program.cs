@@ -14,8 +14,8 @@ namespace Morabaraba_9001
         void Shoot(IPlayer player);
         List<ICell> getNeighbours(string pos);
         ICell getCell(string pos);
-        bool isMovable();
-        bool isInMill();
+        bool isMovable(string pos);
+        bool isInMill(string pos);
     }
     public interface ICell
     {
@@ -83,30 +83,30 @@ namespace Morabaraba_9001
             { "G4", new List<string> { "G1", "F4", "G7" } },
             { "G7", new List<string> { "G4", "F6", "D7" } }
         };
-        public static List<List<string>> mills = new List<List<string>>
+        public static List<string[]> mills = new List<List<string>>
         {
-            new List<string> {"A1", "A4", "A7"},
-            new List<string> {"B2", "B4", "B6"},
-            new List<string> {"C3", "C4", "C5"},
-            new List<string> {"D1", "D2", "D3"},
-            new List<string> {"D5", "D6", "D7"},
-            new List<string> {"E3", "E4", "E5"},
-            new List<string> {"F2", "F4", "F6"},
-            new List<string> {"G1", "G4", "G7"},
+            new string[] {"A1", "A4", "A7"},
+            new string[] {"B2", "B4", "B6"},
+            new string[] {"C3", "C4", "C5"},
+            new string[] {"D1", "D2", "D3"},
+            new string[] {"D5", "D6", "D7"},
+            new string[] {"E3", "E4", "E5"},
+            new string[] {"F2", "F4", "F6"},
+            new string[] {"G1", "G4", "G7"},
 
-            new List<string> {"A1", "D1", "G1"},
-            new List<string> {"B2", "D2", "F2"},
-            new List<string> {"C3", "D3", "E3"},
-            new List<string> {"A4", "B4", "C4"},
-            new List<string> {"E4", "F4", "G4"},
-            new List<string> {"C5", "D5", "E5"},
-            new List<string> {"B6", "D6", "F6"},
-            new List<string> {"A7", "D7", "G7"},
+            new string[] {"A1", "D1", "G1"},
+            new string[] {"B2", "D2", "F2"},
+            new string[] {"C3", "D3", "E3"},
+            new string[] {"A4", "B4", "C4"},
+            new string[] {"E4", "F4", "G4"},
+            new string[] {"C5", "D5", "E5"},
+            new string[] {"B6", "D6", "F6"},
+            new string[] {"A7", "D7", "G7"},
 
-            new List<string> {"A1", "B2", "C3"},
-            new List<string> {"G1", "F2", "E3"},
-            new List<string> {"G7", "F6", "E5"},
-            new List<string> {"A7", "B6", "C5"}
+            new string[] {"A1", "B2", "C3"},
+            new string[] {"G1", "F2", "E3"},
+            new string[] {"G7", "F6", "E5"},
+            new string[] { "A7", "B6", "C5"}
         }; 
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
@@ -191,9 +191,20 @@ namespace Morabaraba_9001
             return emptyNeighbours.Count() > 0;
         }
 
-        public bool isInMill()
+        public bool isInMill(string pos)
         {
-            throw new NotImplementedException();
+            List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos));
+            List<ICell[]> millStates = relevantmills.Select(mill => mill.Select(p => getCell(p)));
+            
+            foreach (ICell[] mill in millStates)
+            {
+                if ((mill[0] == Player.X && mill[1] == Player.X && mill[2] == Player.X) ||
+                    (mill[0] == Player.O && mill[1] == Player.O && mill[2] == Player.O))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     
