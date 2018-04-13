@@ -12,18 +12,15 @@ namespace Morabaraba_9001
         List<ICell> Cows(Player player);
         void Move(IPlayer player);
         void Shoot(IPlayer player);
-        List<ICell> getNeighbours(ICell cell);
+        List<ICell> getNeighbours(string pos);
         ICell getCell(string pos);
-        
+        bool isMovable();
+        bool isInMill();
     }
     public interface ICell
     {
         Player getState { get; }
         void changeState(Player changedState);
-        bool isMovable();
-        bool isInMill();
-        void Move(string movePos);
-        string getPosition();
     }
     public interface IPlayer
     {
@@ -55,26 +52,6 @@ namespace Morabaraba_9001
         public void changeState(Player changedState)
         {
             state = changedState;
-        }
-
-        public string getPosition()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isInMill()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isMovable()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Move(string movePos)
-        {
-            throw new NotImplementedException();
         }
     }
     public class Board : IBoard
@@ -130,12 +107,12 @@ namespace Morabaraba_9001
 
 
 
-        public List<ICell> getNeighbours(ICell cell)
+        public List<ICell> getNeighbours(string pos)
         {
             List<ICell> neighbourList = new List<ICell>();
-            foreach (string pos in neighbours[cell.getPosition()])
+            foreach (string npos in neighbours[pos])
             {
-                neighbourList.Add(getCell(pos));
+                neighbourList.Add(getCell(npos));
             }
             return neighbourList;
         }
@@ -149,7 +126,7 @@ namespace Morabaraba_9001
                 if (board[piecePos].getState == player.playerID)
                 {
                     List<ICell> emptyNeighbours = 
-                        (from cell in getNeighbours(getCell(piecePos))
+                        (from cell in getNeighbours(piecePos)
                          where cell.getState == Player.None
                          select cell).ToList();
                     if (emptyNeighbours.Count() > 0)
@@ -184,6 +161,16 @@ namespace Morabaraba_9001
                 }
             }
             board[shootPos].changeState(Player.None);
+        }
+
+        public bool isMovable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool isInMill()
+        {
+            throw new NotImplementedException();
         }
     }
     
