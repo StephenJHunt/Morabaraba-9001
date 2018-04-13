@@ -4,44 +4,58 @@ using System.Linq;
 
 namespace Morabaraba_9001
 {
-    
-
-
     public interface IBoard
     {
         List<ICell> Cows(Player player);
+
         void Move(IPlayer player);
+
         void Shoot(IPlayer player);
+
         List<ICell> getNeighbours(string pos);
+
         ICell getCell(string pos);
+
         bool isMovable();
+
         bool isInMill();
     }
+
     public interface ICell
     {
         Player getState { get; }
+
         void changeState(Player changedState);
     }
+
     public interface IPlayer
     {
         Player playerID { get; }
+
         string getMove(string prompt);
+
         Player getOpponent();
     }
+
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
+
     public interface IGameManager
     {
         void startGame();
-        void placingPhase();
-        void movingPhase();
-        void endGame();
 
+        void placingPhase();
+
+        void movingPhase();
+
+        void endGame();
     }
+
     public class invalidMoveException : ApplicationException { }
+
     public class Cell : ICell
     {
-        Player state;
+        private Player state;
         public Player getState => state;
 
         public Cell()
@@ -54,9 +68,11 @@ namespace Morabaraba_9001
             state = changedState;
         }
     }
+
     public class Board : IBoard
     {
-        public static string[] validPositions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+        public static string[] validPositions = new string[] { "A1", "A4", "A7", "B2", "B4", "B6", "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+
         public static Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
             { "A1", new List<string> { "A4", "D1", "B2" } },
             { "A4", new List<string> { "A1", "B4", "A7" } },
@@ -82,9 +98,10 @@ namespace Morabaraba_9001
             { "G1", new List<string> { "D1", "G4", "F2" } },
             { "G4", new List<string> { "G1", "F4", "G7" } },
             { "G7", new List<string> { "G4", "F6", "D7" } }
-           
         };
+
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+
         public Board()
         {
             foreach (string pos in validPositions)//initialising board with empty values
@@ -92,6 +109,7 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
+
         public List<ICell> Cows(Player player)
         {
             var query = from cell in board.Values.ToList()
@@ -104,8 +122,6 @@ namespace Morabaraba_9001
         {
             return board[pos];
         }
-
-
 
         public List<ICell> getNeighbours(string pos)
         {
@@ -125,7 +141,7 @@ namespace Morabaraba_9001
                 piecePos = player.getMove("Select piece to move: ");
                 if (board[piecePos].getState == player.playerID)
                 {
-                    List<ICell> emptyNeighbours = 
+                    List<ICell> emptyNeighbours =
                         (from cell in getNeighbours(piecePos)
                          where cell.getState == Player.None
                          select cell).ToList();
@@ -141,14 +157,13 @@ namespace Morabaraba_9001
                 placePos = player.getMove("Select position to place" + piecePos + ": ");
                 if (board[piecePos].getState == player.playerID)
                 {
-                    
                 }
             }
 
             board[placePos].changeState(board[piecePos].getState);
             board[piecePos].changeState(Player.None);
         }
-        
+
         public void Shoot(IPlayer player)
         {
             string shootPos;
@@ -168,16 +183,42 @@ namespace Morabaraba_9001
             throw new NotImplementedException();
         }
 
-        public bool isInMill()
+        public bool isInMill(string Position, Player player)
         {
-            throw new NotImplementedException();
+            foreach (List<string> mill in Mills)//mills needs 2 still be created
+            {
+                foreach (string positionInMill in mill)
+                {
+                    if (Position == positionInMill)
+                    {
+                        foreach (string _positionsInMill in mill)
+                        {
+                            if (board[_positionsInMill].getState != player)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        public bool AllInMill(Player player)
+        {
+            foreach (string position in validPositions)
+            {
+                if (!isInMill(player))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
-    
 
     public class MorabarabaManager : IGameManager
     {
-        
         public void endGame()
         {
             throw new NotImplementedException();
@@ -198,14 +239,17 @@ namespace Morabaraba_9001
             throw new NotImplementedException();
         }
     }
+
     public class GamePlayer : IPlayer
     {
         public GamePlayer(Player player)
         {
             gameplayer = player;
         }
-        Player gameplayer;
+
+        private Player gameplayer;
         public Player playerID => gameplayer;
+
         public Player getOpponent()
         {
             if (gameplayer == Player.X)
@@ -214,6 +258,7 @@ namespace Morabaraba_9001
             }
             return Player.X;
         }
+
         public string getMove(string prompt)
         {
             string input;
@@ -230,13 +275,11 @@ namespace Morabaraba_9001
             return input;
         }
     }
-    class Program
-    {
-        
 
-        static void Main(string[] args)
+    internal class Program
+    {
+        private static void Main(string[] args)
         {
-            
         }
     }
 }
