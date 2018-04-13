@@ -12,7 +12,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void AtStartBoardIsEmpty()
         {
-            /*Board b = new Board();
+            Board b = new Board();
             bool isEmpty = true;
             foreach (ICell cell in b.board.Values)
             {
@@ -21,12 +21,13 @@ namespace Morabaraba_9001.Test
                     isEmpty = false;
                 }
             }
-            Assert.That(isEmpty);*/
+            Assert.That(isEmpty);
         }
         [Test]
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
-
+            MorabarabaManager mbman = new MorabarabaManager();
+            Assert(mbman.startingPlayer == Player.X);
         }
         [Test]
         public void CowsCanOnlyBePlayedOnEmptySpaces()
