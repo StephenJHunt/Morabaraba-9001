@@ -16,6 +16,7 @@ namespace Morabaraba_9001
         ICell getCell(string pos);
         bool isMovable(string pos);
         bool isInMill(string pos);
+        bool allInMill(Player player);
     }
     public interface ICell
     {
@@ -189,6 +190,16 @@ namespace Morabaraba_9001
              where cell.getState == Player.None
              select cell).ToList();
             return emptyNeighbours.Count() > 0;
+        }
+
+        public bool allInMill(Player player)
+        {
+            foreach (string pos in board.Keys)
+            {
+                if (board[pos].getState == player && !isInMill(board[pos]))
+                    return false; 
+            }
+            return true;
         }
 
         public bool isInMill(string pos)
