@@ -47,7 +47,9 @@ namespace Morabaraba_9001.Test
             IGameManager gm = Substitute.For<IGameManager>();
             Board b = new Board();
             gm.placingPhase();
-            b.DidNotReceiveWithAnyArgs().Move("a", "a");
+            Player pl = Player.None;
+            GamePlayer player = new GamePlayer(pl);
+            b.DidNotReceiveWithAnyArgs().Move(player);
         }
         //moving
         [Test]
@@ -61,7 +63,7 @@ namespace Morabaraba_9001.Test
         {
             Board b = new Board();
             ICell cell = b.board[moveCell];
-            //Assert.That(cell.getState == CellState.Empty);
+            Assert.That(cell.getState == Player.None);
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
