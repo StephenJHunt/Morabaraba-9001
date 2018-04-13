@@ -148,7 +148,14 @@ namespace Morabaraba_9001
                 piecePos = player.getMove("Select piece to move: ");
                 if (board[piecePos].getState == player.playerID)
                 {
-                    break;
+                    List<ICell> emptyNeighbours = 
+                        (from cell in getNeighbours(getCell(piecePos))
+                         where cell.getState == Player.None
+                         select cell).ToList();
+                    if (emptyNeighbours.Count() > 0)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -157,7 +164,7 @@ namespace Morabaraba_9001
                 placePos = player.getMove("Select position to place" + piecePos + ": ");
                 if (board[piecePos].getState == player.playerID)
                 {
-                    break;
+                    
                 }
             }
 
