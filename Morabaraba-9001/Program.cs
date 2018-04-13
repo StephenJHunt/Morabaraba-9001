@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Morabaraba_9001
 {
@@ -96,7 +97,7 @@ namespace Morabaraba_9001
             { "G7", new List<string> { "G4", "F6", "D7" } }
            
         };
-        Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+        public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
         {
             string[] positions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
@@ -107,15 +108,10 @@ namespace Morabaraba_9001
         }
         public List<ICell> Cows(CellState player)
         {
-            List<ICell> playerCells = new List<ICell>();
-            foreach (ICell cell in board.Values)
-            {
-                if (cell.getState == player)
-                {
-                    playerCells.Add(cell);
-                }
-            }
-            return playerCells;
+            var query = from cell in board.Values.ToList()
+                        where cell.getState == player
+                        select cell;
+            return query.ToList();
         }
 
         public ICell getCell(string pos)
@@ -142,7 +138,6 @@ namespace Morabaraba_9001
         public List<ICell> getNeighbours(ICell cell)
         {
             List<ICell> neighbourList = new List<ICell>();
-
             foreach (string pos in neighbours[cell.getPosition()])
             {
                 neighbourList.Add(getCell(pos));
@@ -152,7 +147,8 @@ namespace Morabaraba_9001
 
         public void Move(string piecePos, string movePos)
         {
-            throw new NotImplementedException();
+            board[movePos].changeState(board[piecePos].getState);
+            board[piecePos].changeState(CellState.Empty);
         }
         
         public void Shoot(string shootPos)
