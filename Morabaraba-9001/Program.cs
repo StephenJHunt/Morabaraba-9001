@@ -11,7 +11,7 @@ namespace Morabaraba_9001
         void Shoot(string shootPos);
         List<ICell> getNeighbours(ICell cell);
         ICell getCell(string pos);
-        string getMove(string prompt);
+        
     }
     public interface ICell
     {
@@ -25,7 +25,7 @@ namespace Morabaraba_9001
     public interface IPlayer
     {
         Player player { get; }
-
+        string getMove(string prompt);
     }
     public enum CellState { X, O, Empty }
     public enum Player { X, O }
@@ -119,21 +119,7 @@ namespace Morabaraba_9001
             return board[pos];
         }
 
-        public string getMove(string prompt)
-        {
-            string input;
-            while (true)
-            {
-                Console.Write(prompt);
-                input = Console.ReadLine().ToUpper();
-                if(board.ContainsKey(input))
-                {
-                    break;
-                }
-                Console.WriteLine("Please choose a valid position. you'll get snuggles ^w^ :3");
-            }
-            return input; 
-        }
+
 
         public List<ICell> getNeighbours(ICell cell)
         {
@@ -184,6 +170,21 @@ namespace Morabaraba_9001
     {
         Player gameplayer;
         public Player player => gameplayer;
+        public string getMove(string prompt)
+        {
+            string input;
+            while (true)
+            {
+                Console.Write(prompt);
+                input = Console.ReadLine().ToUpper();
+                if (board.ContainsKey(input))
+                {
+                    break;
+                }
+                Console.WriteLine("Please choose a valid position. you'll get snuggles ^w^ :3");
+            }
+            return input;
+        }
     }
     class Program
     {
