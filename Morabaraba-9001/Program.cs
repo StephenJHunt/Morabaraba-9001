@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Morabaraba_9001
 {
@@ -107,15 +108,10 @@ namespace Morabaraba_9001
         }
         public List<ICell> Cows(CellState player)
         {
-            List<ICell> playerCells = new List<ICell>();
-            foreach (ICell cell in board.Values)
-            {
-                if (cell.getState == player)
-                {
-                    playerCells.Add(cell);
-                }
-            }
-            return playerCells;
+            var query = from cell in board.Values.ToList()
+                        where cell.getState == player
+                        select cell;
+            return query.ToList();
         }
 
         public ICell getCell(string pos)
