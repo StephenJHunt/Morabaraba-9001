@@ -9,17 +9,17 @@ namespace Morabaraba_9001
 
     public interface IBoard
     {
-        List<ICell> Cows(CellState player);
-        void Move(string piecePos, string movePos);
-        void Shoot(string shootPos);
+        List<ICell> Cows(Player player);
+        void Move(IPlayer player);
+        void Shoot(IPlayer player);
         List<ICell> getNeighbours(ICell cell);
         ICell getCell(string pos);
         
     }
     public interface ICell
     {
-        CellState getState { get; }
-        void changeState(CellState changedState);
+        Player getState { get; }
+        void changeState(Player changedState);
         bool isMovable();
         bool isInMill();
         void Move(string movePos);
@@ -27,11 +27,12 @@ namespace Morabaraba_9001
     }
     public interface IPlayer
     {
-        Player player { get; }
+        Player playerID { get; }
         string getMove(string prompt);
+        Player getOpponent();
     }
-    public enum CellState { X, O, Empty }
-    public enum Player { X, O }
+    //public enum CellState { X, O, Empty }
+    public enum Player { X, O, None }
     public interface IGameManager
     {
         void startGame();
@@ -43,10 +44,15 @@ namespace Morabaraba_9001
     public class invalidMoveException : ApplicationException { }
     public class Cell : ICell
     {
-        CellState state;
-        public CellState getState => state;
+        Player state;
+        public Player getState => state;
 
-        public void changeState(CellState changedState)
+        public Cell()
+        {
+            state = Player.None;
+        }
+
+        public void changeState(Player changedState)
         {
             state = changedState;
         }
@@ -109,7 +115,7 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
-        public List<ICell> Cows(CellState player)
+        public List<ICell> Cows(Player player)
         {
             var query = from cell in board.Values.ToList()
                         where cell.getState == player
@@ -134,15 +140,50 @@ namespace Morabaraba_9001
             return neighbourList;
         }
 
-        public void Move(string piecePos, string movePos)
+        public void Move(IPlayer player)
         {
-            board[movePos].changeState(board[piecePos].getState);
-            board[piecePos].changeState(CellState.Empty);
+            string piecePos, placePos;
+            while (true)
+            {
+                piecePos = player.getMove("Select piece to move: ");
+                if (board[piecePos].getState == player.playerID)
+                {
+                    List<ICell> emptyNeighbours = 
+                        (from cell in getNeighbours(getCell(piecePos))
+                         where cell.getState == Player.None
+                         select cell).ToList();
+                    if (emptyNeighbours.Count() > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            while (true)
+            {
+                placePos = player.getMove("Select position to place" + piecePos + ": ");
+                if (board[piecePos].getState == player.playerID)
+                {
+                    
+                }
+            }
+
+            board[placePos].changeState(board[piecePos].getState);
+            board[piecePos].changeState(Player.None);
         }
         
-        public void Shoot(string shootPos)
+        public void Shoot(IPlayer player)
         {
-            throw new NotImplementedException();
+            string shootPos;
+            while (true)
+            {
+                shootPos = player.getMove("Select piece to move: ");
+                if (board[shootPos].getState == player.getOpponent())
+                {
+                    break;
+                }
+            }
+            board[shootPos].changeState(Player.None);
         }
     }
     
@@ -177,8 +218,15 @@ namespace Morabaraba_9001
             gameplayer = player;
         }
         Player gameplayer;
-        public Player player => gameplayer;
-
+        public Player playerID => gameplayer;
+        public Player getOpponent()
+        {
+            if (gameplayer == Player.X)
+            {
+                return Player.O;
+            }
+            return Player.X;
+        }
         public string getMove(string prompt)
         {
             string input;
