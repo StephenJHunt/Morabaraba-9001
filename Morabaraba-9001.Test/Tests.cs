@@ -27,17 +27,18 @@ namespace Morabaraba_9001.Test
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
             MorabarabaManager mbman = new MorabarabaManager();
-            Assert(mbman.startingPlayer == Player.X);
+            //Assert(mbman.startingPlayer == Player.X);
         }
         [Test]
-        public void CowsCanOnlyBePlayedOnEmptySpaces()
+        public void CowsCanOnlyBePlayedOnEmptySpaces(string input)
         {
-
+            
         }
         [Test]
         public void AMaximumOf12PlacementsPerPlayerAreAllowed()
         {
-
+            Assert.That(Board.Xpieces == 12);
+            Assert.That(Board.Ypieces == 12);
         }
         [Test]
         public void CowsCannotBeMovedDuringPlacement()
@@ -46,12 +47,13 @@ namespace Morabaraba_9001.Test
         }
         //moving
         [Test]
-        public void ANormalCowCanOnlyMoveToAConnectedSpace()
+        public void ANormalCowCanOnlyMoveToAConnectedSpace(ICell cowCell, ICell moveCell)
         {
-
+            Board b = new Board();
+            Assert.That(b.getNeighbours(cowCell).Contains(moveCell));
         }
         [Test]
-        public void CowCanOnlyMoveToEmptySpace()
+        public void CowCanOnlyMoveToEmptySpace(ICell cowCell, ICell moveCell)
         {
 
         }
