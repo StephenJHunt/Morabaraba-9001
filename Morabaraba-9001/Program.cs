@@ -125,14 +125,9 @@ namespace Morabaraba_9001
                 piecePos = player.getMove("Select piece to move: ");
                 if (board[piecePos].getState == player.playerID)
                 {
-                    List<ICell> emptyNeighbours = 
-                        (from cell in getNeighbours(piecePos)
-                         where cell.getState == Player.None
-                         select cell).ToList();
-                    if (emptyNeighbours.Count() > 0)
-                    {
+
+                    if (isMovable(piecePos))
                         break;
-                    }
                 }
             }
 
@@ -163,9 +158,13 @@ namespace Morabaraba_9001
             board[shootPos].changeState(Player.None);
         }
 
-        public bool isMovable()
+        public bool isMovable(string pos)
         {
-            throw new NotImplementedException();
+            List<ICell> emptyNeighbours =
+            (from cell in getNeighbours(pos)
+             where cell.getState == Player.None
+             select cell).ToList();
+            return emptyNeighbours.Count() > 0;
         }
 
         public bool isInMill()
