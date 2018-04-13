@@ -57,9 +57,11 @@ namespace Morabaraba_9001.Test
             Assert.That(b.getNeighbours(cowCell).Contains(moveCell));
         }
         [Test]
-        public void CowCanOnlyMoveToEmptySpace(ICell cowCell, ICell moveCell)
+        public void CowCanOnlyMoveToEmptySpace(string moveCell)
         {
-
+            Board b = new Board();
+            ICell cell = b.board[moveCell];
+            //Assert.That(cell.getState == CellState.Empty);
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
