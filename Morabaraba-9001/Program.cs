@@ -82,8 +82,32 @@ namespace Morabaraba_9001
             { "G1", new List<string> { "D1", "G4", "F2" } },
             { "G4", new List<string> { "G1", "F4", "G7" } },
             { "G7", new List<string> { "G4", "F6", "D7" } }
-           
         };
+        public static List<List<string>> mills = new List<List<string>>
+        {
+            new List<string> {"A1", "A4", "A7"},
+            new List<string> {"B2", "B4", "B6"},
+            new List<string> {"C3", "C4", "C5"},
+            new List<string> {"D1", "D2", "D3"},
+            new List<string> {"D5", "D6", "D7"},
+            new List<string> {"E3", "E4", "E5"},
+            new List<string> {"F2", "F4", "F6"},
+            new List<string> {"G1", "G4", "G7"},
+
+            new List<string> {"A1", "D1", "G1"},
+            new List<string> {"B2", "D2", "F2"},
+            new List<string> {"C3", "D3", "E3"},
+            new List<string> {"A4", "B4", "C4"},
+            new List<string> {"E4", "F4", "G4"},
+            new List<string> {"C5", "D5", "E5"},
+            new List<string> {"B6", "D6", "F6"},
+            new List<string> {"A7", "D7", "G7"},
+
+            new List<string> {"A1", "B2", "C3"},
+            new List<string> {"G1", "F2", "E3"},
+            new List<string> {"G7", "F6", "E5"},
+            new List<string> {"A7", "B6", "C5"}
+        }; 
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
         {
