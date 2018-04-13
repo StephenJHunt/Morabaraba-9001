@@ -10,8 +10,8 @@ namespace Morabaraba_9001
     public interface IBoard
     {
         List<ICell> Cows(Player player);
-        void Move(Player player, string piecePos, string movePos);
-        void Shoot(Player player, string shootPos);
+        void Move(IPlayer player);
+        void Shoot(IPlayer player);
         List<ICell> getNeighbours(ICell cell);
         ICell getCell(string pos);
         
@@ -27,8 +27,9 @@ namespace Morabaraba_9001
     }
     public interface IPlayer
     {
-        Player player { get; }
+        Player playerID { get; }
         string getMove(string prompt);
+        Player getOpponent();
     }
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
@@ -139,16 +140,43 @@ namespace Morabaraba_9001
             return neighbourList;
         }
 
-        public void Move(Player player, string piecePos, string movePos)
-        {   
-            if (board[piecePos].)
-            board[movePos].changeState(board[piecePos].getState);
+        public void Move(IPlayer player)
+        {
+            string piecePos, placePos;
+            while (true)
+            {
+                piecePos = player.getMove("Select piece to move: ");
+                if (board[piecePos].getState == player.playerID)
+                {
+                    break;
+                }
+            }
+
+            while (true)
+            {
+                placePos = player.getMove("Select position to place" + piecePos + ": ");
+                if (board[piecePos].getState == player.playerID)
+                {
+                    break;
+                }
+            }
+
+            board[placePos].changeState(board[piecePos].getState);
             board[piecePos].changeState(Player.None);
         }
         
-        public void Shoot(Player player, string shootPos)
+        public void Shoot(IPlayer player)
         {
-            throw new NotImplementedException();
+            string shootPos;
+            while (true)
+            {
+                shootPos = player.getMove("Select piece to move: ");
+                if (board[shootPos].getState == player.getOpponent())
+                {
+                    break;
+                }
+            }
+            board[shootPos].changeState(Player.None);
         }
     }
     
@@ -183,8 +211,15 @@ namespace Morabaraba_9001
             gameplayer = player;
         }
         Player gameplayer;
-        public Player player => gameplayer;
-
+        public Player playerID => gameplayer;
+        public Player getOpponent()
+        {
+            if (gameplayer == Player.X)
+            {
+                return Player.O;
+            }
+            return Player.X;
+        }
         public string getMove(string prompt)
         {
             string input;
