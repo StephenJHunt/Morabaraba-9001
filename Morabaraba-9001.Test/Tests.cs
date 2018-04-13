@@ -19,6 +19,26 @@ namespace Morabaraba_9001.Test
         }
         Assert.That(isEmpty);
     }
+    [Test]
+    public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
+    {
+
+    }
+    [Test]
+    public void CowsCanOnlyBePlayedOnEmptySpaces()
+    {
+
+    }
+    [Test]
+    public void AMaximumOf12PlacementsPerPlayerAreAllowed()
+    {
+
+    }
+    [Test]
+    public void CowsCannotBeMovedDuringPlacement()
+    {
+
+    }
     public class Tests
     {
 		//tests
