@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Morabaraba_9001
 {
+    
+
+
     public interface IBoard
     {
         List<ICell> Cows(CellState player);
@@ -70,7 +73,8 @@ namespace Morabaraba_9001
     }
     public class Board : IBoard
     {
-        Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
+        public static string[] validPositions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+        public static Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
             { "A1", new List<string> { "A4", "D1", "B2" } },
             { "A4", new List<string> { "A1", "B4", "A7" } },
             { "A7", new List<string> { "A4", "B6", "D7" } },
@@ -100,8 +104,7 @@ namespace Morabaraba_9001
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
         {
-            string[] positions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
-            foreach (string pos in positions)//initialising board with empty values
+            foreach (string pos in validPositions)//initialising board with empty values
             {
                 board.Add(pos, new Cell());
             }
@@ -146,6 +149,7 @@ namespace Morabaraba_9001
 
     public class MorabarabaManager : IGameManager
     {
+        
         public void endGame()
         {
             throw new NotImplementedException();
@@ -174,6 +178,7 @@ namespace Morabaraba_9001
         }
         Player gameplayer;
         public Player player => gameplayer;
+
         public string getMove(string prompt)
         {
             string input;
@@ -181,7 +186,7 @@ namespace Morabaraba_9001
             {
                 Console.Write(prompt);
                 input = Console.ReadLine().ToUpper();
-                if (board.ContainsKey(input))
+                if (Board.validPositions.Contains(input))
                 {
                     break;
                 }
@@ -192,6 +197,8 @@ namespace Morabaraba_9001
     }
     class Program
     {
+        
+
         static void Main(string[] args)
         {
             
