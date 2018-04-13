@@ -168,6 +168,10 @@ namespace Morabaraba_9001
     }
     public class GamePlayer : IPlayer
     {
+        public GamePlayer(Player player)
+        {
+            gameplayer = player;
+        }
         Player gameplayer;
         public Player player => gameplayer;
         public string getMove(string prompt)
