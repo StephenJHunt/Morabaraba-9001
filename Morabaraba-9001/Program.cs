@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Morabaraba_9001
 {
+    
+
+
     public interface IBoard
     {
         List<ICell> Cows(CellState player);
@@ -10,7 +14,7 @@ namespace Morabaraba_9001
         void Shoot(string shootPos);
         List<ICell> getNeighbours(ICell cell);
         ICell getCell(string pos);
-        string getMove(string prompt);
+        
     }
     public interface ICell
     {
@@ -24,7 +28,7 @@ namespace Morabaraba_9001
     public interface IPlayer
     {
         Player player { get; }
-
+        string getMove(string prompt);
     }
     public enum CellState { X, O, Empty }
     public enum Player { X, O }
@@ -69,7 +73,8 @@ namespace Morabaraba_9001
     }
     public class Board : IBoard
     {
-        Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
+        public static string[] validPositions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+        public static Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
             { "A1", new List<string> { "A4", "D1", "B2" } },
             { "A4", new List<string> { "A1", "B4", "A7" } },
             { "A7", new List<string> { "A4", "B6", "D7" } },
@@ -96,26 +101,20 @@ namespace Morabaraba_9001
             { "G7", new List<string> { "G4", "F6", "D7" } }
            
         };
-        Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+        public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
         public Board()
         {
-            string[] positions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
-            foreach (string pos in positions)//initialising board with empty values
+            foreach (string pos in validPositions)//initialising board with empty values
             {
                 board.Add(pos, new Cell());
             }
         }
         public List<ICell> Cows(CellState player)
         {
-            List<ICell> playerCells = new List<ICell>();
-            foreach (ICell cell in board.Values)
-            {
-                if (cell.getState == player)
-                {
-                    playerCells.Add(cell);
-                }
-            }
-            return playerCells;
+            var query = from cell in board.Values.ToList()
+                        where cell.getState == player
+                        select cell;
+            return query.ToList();
         }
 
         public ICell getCell(string pos)
@@ -123,26 +122,11 @@ namespace Morabaraba_9001
             return board[pos];
         }
 
-        public string getMove(string prompt)
-        {
-            string input;
-            while (true)
-            {
-                Console.Write(prompt);
-                input = Console.ReadLine().ToUpper();
-                if(board.ContainsKey(input))
-                {
-                    break;
-                }
-                Console.WriteLine("Please choose a valid position. you'll get snuggles ^w^ :3");
-            }
-            return input; 
-        }
+
 
         public List<ICell> getNeighbours(ICell cell)
         {
             List<ICell> neighbourList = new List<ICell>();
-
             foreach (string pos in neighbours[cell.getPosition()])
             {
                 neighbourList.Add(getCell(pos));
@@ -152,7 +136,8 @@ namespace Morabaraba_9001
 
         public void Move(string piecePos, string movePos)
         {
-            throw new NotImplementedException();
+            board[movePos].changeState(board[piecePos].getState);
+            board[piecePos].changeState(CellState.Empty);
         }
         
         public void Shoot(string shootPos)
@@ -164,6 +149,7 @@ namespace Morabaraba_9001
 
     public class MorabarabaManager : IGameManager
     {
+        
         public void endGame()
         {
             throw new NotImplementedException();
@@ -186,11 +172,33 @@ namespace Morabaraba_9001
     }
     public class GamePlayer : IPlayer
     {
+        public GamePlayer(Player player)
+        {
+            gameplayer = player;
+        }
         Player gameplayer;
         public Player player => gameplayer;
+
+        public string getMove(string prompt)
+        {
+            string input;
+            while (true)
+            {
+                Console.Write(prompt);
+                input = Console.ReadLine().ToUpper();
+                if (Board.validPositions.Contains(input))
+                {
+                    break;
+                }
+                Console.WriteLine("Please choose a valid position. you'll get snuggles ^w^ :3");
+            }
+            return input;
+        }
     }
     class Program
     {
+        
+
         static void Main(string[] args)
         {
             
