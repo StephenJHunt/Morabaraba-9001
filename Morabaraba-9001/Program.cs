@@ -154,15 +154,17 @@ namespace Morabaraba_9001
                     if (isMovable(piecePos))
                         break;
                 }
+                Console.WriteLine("Please select a valid piece");
             }
 
             while (true)
             {
                 placePos = player.getMove("Select position to place" + piecePos + ": ");
-                if (board[piecePos].getState == player.playerID)
+                if (neighbours[piecePos].Contains(placePos) && board[placePos].getState == Player.None)
                 {
-                    
+                    break;
                 }
+                Console.WriteLine("Please select a valid position");
             }
 
             board[placePos].changeState(board[piecePos].getState);
