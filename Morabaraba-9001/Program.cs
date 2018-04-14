@@ -10,6 +10,7 @@ namespace Morabaraba_9001
     public interface IBoard
     {
         List<ICell> Cows(Player player);
+        void Place(IPlayer player, string pos);
         void Move(IPlayer player);
         void Shoot(IPlayer player);
         List<ICell> getNeighbours(string pos);
@@ -140,6 +141,23 @@ namespace Morabaraba_9001
                 neighbourList.Add(getCell(npos));
             }
             return neighbourList;
+        }
+
+        public void Place(IPlayer player, string pos)
+        {
+            string placePos;
+            while (true)
+            {
+                placePos = player.getMove("Select position to place your piece: ");
+                if (board[placePos].getState == player.playerID)
+                {
+
+                    if (isMovable(placePos))
+                        break;
+                }
+                Console.WriteLine("Please select a valid position");
+            }
+            board[placePos].changeState(player.playerID);
         }
 
         public void Move(IPlayer player)
