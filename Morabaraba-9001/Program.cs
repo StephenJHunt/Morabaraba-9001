@@ -255,6 +255,7 @@ namespace Morabaraba_9001
 
         public void Display()
         {
+            Console.Clear();
             string[] cells = board.Values.Select(cell => playerToString(cell.getState)).ToArray();
             string dis =
                 $@"    
