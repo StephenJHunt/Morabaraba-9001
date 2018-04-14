@@ -4,48 +4,69 @@ using System.Linq;
 
 namespace Morabaraba_9001
 {
-    
-
-
     public interface IBoard
     {
+        // test comment
         int numCows(Player player);
+
         void Place(IPlayer player);
+
         void Move(IPlayer player);
+
         void Shoot(IPlayer player);
+
         List<ICell> getNeighbours(string pos);
+
         ICell getCell(string pos);
+
         bool isMovable(string pos);
+
         bool isInMill(string pos);
+
         bool allInMill(Player player);
+
         void Display(string extraDisplay);
+
         bool canPlay(IPlayer player);
     }
+
     public interface ICell
     {
         Player getState { get; }
+
         void changeState(Player changedState);
     }
+
     public interface IPlayer
     {
         Player playerID { get; }
+
         string getMove(string prompt);
+
         Player getOpponent();
-        int stones { get;  }
+
+        int stones { get; }
+
         void reduceStones();
+
         bool isFlying();
     }
+
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
+
     public interface IGameManager
     {
         void placingPhase();
+
         void movingPhase();
     }
+
     public class invalidMoveException : ApplicationException { }
+
     public class Cell : ICell
     {
-        Player state;
+        private Player state;
         public Player getState => state;
 
         public Cell()
@@ -58,9 +79,11 @@ namespace Morabaraba_9001
             state = changedState;
         }
     }
+
     public class Board : IBoard
     {
-        public static string[] validPositions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+        public static string[] validPositions = new string[] { "A1", "A4", "A7", "B2", "B4", "B6", "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+
         public static Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
             { "A1", new List<string> { "A4", "D1", "B2" } },
             { "A4", new List<string> { "A1", "B4", "A7" } },
@@ -87,6 +110,7 @@ namespace Morabaraba_9001
             { "G4", new List<string> { "G1", "F4", "G7" } },
             { "G7", new List<string> { "G4", "F6", "D7" } }
         };
+
         public static List<string[]> mills = new List<string[]>
         {
             new string[] {"A1", "A4", "A7"},
@@ -111,7 +135,8 @@ namespace Morabaraba_9001
             new string[] {"G1", "F2", "E3"},
             new string[] {"G7", "F6", "E5"},
             new string[] { "A7", "B6", "C5"}
-        }; 
+        };
+
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
 
         public Board()
@@ -153,7 +178,6 @@ namespace Morabaraba_9001
                 placePos = player.getMove("Select position to place your piece: ");
                 if (board[placePos].getState == Player.None)
                 {
-
                     if (isMovable(placePos))
                         break;
                 }
@@ -234,7 +258,6 @@ namespace Morabaraba_9001
                 where isMovable(pos)
                 select pos;
             return query.Count() > 0;
-                
         }
 
         public bool allInMill(Player player)
@@ -242,7 +265,7 @@ namespace Morabaraba_9001
             foreach (string pos in board.Keys)
             {
                 if (board[pos].getState == player && !isInMill(pos))
-                    return false; 
+                    return false;
             }
             return true;
         }
@@ -251,7 +274,7 @@ namespace Morabaraba_9001
         {
             List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
             List<ICell[]> millStates = relevantmills.Select(mill => mill.Select(p => getCell(p)).ToArray()).ToList();
-            
+
             foreach (ICell[] mill in millStates)
             {
                 if ((mill[0].getState == Player.X && mill[1].getState == Player.X && mill[2].getState == Player.X) ||
@@ -277,44 +300,41 @@ namespace Morabaraba_9001
             Console.Clear();
             string[] cells = board.Values.Select(cell => playerToString(cell.getState)).ToArray();
             string dis =
-                $@"    
-    1   2  3   4   5  6   7      
-A   {cells[0]}----------{cells[1]}----------{cells[2]}   
-|   | '.       |        .'|      
-B   |   {cells[3]}------{cells[4]}------{cells[5]}   |   
-|   |   |'.    |    .'|   |      
-C   |   |  {cells[6]}---{cells[7]}---{cells[8]}  |   |   
-|   |   |  |       |  |   |      
+                $@"
+    1   2  3   4   5  6   7
+A   {cells[0]}----------{cells[1]}----------{cells[2]}
+|   | '.       |        .'|
+B   |   {cells[3]}------{cells[4]}------{cells[5]}   |
+|   |   |'.    |    .'|   |
+C   |   |  {cells[6]}---{cells[7]}---{cells[8]}  |   |
+|   |   |  |       |  |   |
 D   {cells[9]}---{cells[10]}--{cells[11]}       {cells[12]}--{cells[13]}---{cells[14]}
-|   |   |  |       |  |   |      
-E   |   |  {cells[15]}---{cells[16]}---{cells[17]}  |   |   
-|   |   |.'    |    '.|   |      
-F   |   {cells[18]}------{cells[19]}------{cells[20]}   |   
-|   |.'        |       '. |      
+|   |   |  |       |  |   |
+E   |   |  {cells[15]}---{cells[16]}---{cells[17]}  |   |
+|   |   |.'    |    '.|   |
+F   |   {cells[18]}------{cells[19]}------{cells[20]}   |
+|   |.'        |       '. |
 G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
             Console.WriteLine(extraDisplay);
             Console.WriteLine(dis);
         }
-
-
     }
-    
 
     public class MorabarabaManager : IGameManager
     {
-        IPlayer xPlayer = new GamePlayer(Player.X);
-        IPlayer oPlayer = new GamePlayer(Player.O);
-        IBoard gameBoard = new Board();
+        private IPlayer xPlayer = new GamePlayer(Player.X);
+        private IPlayer oPlayer = new GamePlayer(Player.O);
+        private IBoard gameBoard = new Board();
 
         public void movingPhase()
         {
             IPlayer currPlayer = xPlayer;
-            while(currPlayer.stones > 0)
+            while (currPlayer.stones > 0)
             {
                 gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
                 gameBoard.Place(currPlayer);
-                
+
                 if (currPlayer == xPlayer)
                     currPlayer = oPlayer;
                 else
@@ -348,6 +368,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
     }
+
     public class GamePlayer : IPlayer
     {
         public GamePlayer(Player player)
@@ -355,17 +376,23 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             gameplayer = player;
             numStones = 12;
         }
-        int numStones;
 
-        public bool isFlying() { return numStones > 3; }
+        private int numStones;
 
-        Player gameplayer;
+        public bool isFlying()
+        {
+            return numStones > 3;
+        }
+
+        private Player gameplayer;
 
         public int stones => numStones;
+
         public void reduceStones()
         {
             numStones--;
         }
+
         public Player playerID => gameplayer;
 
         public Player getOpponent()
@@ -393,9 +420,10 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             return input;
         }
     }
-    class Program
+
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             IGameManager manager = new MorabarabaManager();
             manager.movingPhase();
