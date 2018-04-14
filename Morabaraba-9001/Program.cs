@@ -4,47 +4,70 @@ using System.Linq;
 
 namespace Morabaraba_9001
 {
-    
-
-
     public interface IBoard
     {
-        List<ICell> Cows(Player player);
+        int numCows(Player player);
+
+        void Place(IPlayer player);
+
         void Move(IPlayer player);
+
         void Shoot(IPlayer player);
-        List<ICell> getNeighbours(ICell cell);
+
+        List<ICell> getNeighbours(string pos);
+
         ICell getCell(string pos);
-        
+
+        bool isMovable(string pos);
+
+        bool isInMill(string pos);
+
+        bool allInMill(Player player);
+
+        void Display(string extraDisplay);
+
+        bool canPlay(IPlayer player);
     }
+
     public interface ICell
     {
         Player getState { get; }
+
         void changeState(Player changedState);
-        bool isMovable();
-        bool isInMill();
-        void Move(string movePos);
-        string getPosition();
     }
+
     public interface IPlayer
     {
         Player playerID { get; }
+
         string getMove(string prompt);
+
         Player getOpponent();
+
+        int stones { get; }
+
+        void reduceStones();
+
+        bool isFlying();
+
+        void makeFlying();
     }
+
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
+
     public interface IGameManager
     {
-        void startGame();
         void placingPhase();
-        void movingPhase();
-        void endGame();
 
+        void movingPhase();
     }
+
     public class invalidMoveException : ApplicationException { }
+
     public class Cell : ICell
     {
-        Player state;
+        private Player state;
         public Player getState => state;
 
         public Cell()
@@ -56,30 +79,12 @@ namespace Morabaraba_9001
         {
             state = changedState;
         }
-
-        public string getPosition()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isInMill()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isMovable()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Move(string movePos)
-        {
-            throw new NotImplementedException();
-        }
     }
+
     public class Board : IBoard
     {
-        public static string[] validPositions = new string[] {"A1", "A4", "A7", "B2", "B4", "B6" , "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+        public static string[] validPositions = new string[] { "A1", "A4", "A7", "B2", "B4", "B6", "C3", "C4", "C5", "D1", "D2", "D3", "D5", "D6", "D7", "E3", "E4", "E5", "F2", "F4", "F6", "G1", "G4", "G7" };
+
         public static Dictionary<string, List<string>> neighbours = new Dictionary<string, List<string>> {
             { "A1", new List<string> { "A4", "D1", "B2" } },
             { "A4", new List<string> { "A1", "B4", "A7" } },
@@ -105,9 +110,36 @@ namespace Morabaraba_9001
             { "G1", new List<string> { "D1", "G4", "F2" } },
             { "G4", new List<string> { "G1", "F4", "G7" } },
             { "G7", new List<string> { "G4", "F6", "D7" } }
-           
         };
+
+        public static List<string[]> mills = new List<string[]>
+        {
+            new string[] {"A1", "A4", "A7"},
+            new string[] {"B2", "B4", "B6"},
+            new string[] {"C3", "C4", "C5"},
+            new string[] {"D1", "D2", "D3"},
+            new string[] {"D5", "D6", "D7"},
+            new string[] {"E3", "E4", "E5"},
+            new string[] {"F2", "F4", "F6"},
+            new string[] {"G1", "G4", "G7"},
+
+            new string[] {"A1", "D1", "G1"},
+            new string[] {"B2", "D2", "F2"},
+            new string[] {"C3", "D3", "E3"},
+            new string[] {"A4", "B4", "C4"},
+            new string[] {"E4", "F4", "G4"},
+            new string[] {"C5", "D5", "E5"},
+            new string[] {"B6", "D6", "F6"},
+            new string[] {"A7", "D7", "G7"},
+
+            new string[] {"A1", "B2", "C3"},
+            new string[] {"G1", "F2", "E3"},
+            new string[] {"G7", "F6", "E5"},
+            new string[] { "A7", "B6", "C5"}
+        };
+
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+
         public Board()
         {
             foreach (string pos in validPositions)//initialising board with empty values
@@ -115,12 +147,14 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
-        public List<ICell> Cows(Player player)
+
+        public int numCows(Player player)
         {
-            var query = from cell in board.Values.ToList()
-                        where cell.getState == player
-                        select cell;
-            return query.ToList();
+            IEnumerable<ICell> query =
+                from cell in board.Values.ToList()
+                where cell.getState == player
+                select cell;
+            return query.Count();
         }
 
         public ICell getCell(string pos)
@@ -128,16 +162,32 @@ namespace Morabaraba_9001
             return board[pos];
         }
 
-
-
-        public List<ICell> getNeighbours(ICell cell)
+        public List<ICell> getNeighbours(string pos)
         {
             List<ICell> neighbourList = new List<ICell>();
-            foreach (string pos in neighbours[cell.getPosition()])
+            foreach (string npos in neighbours[pos])
             {
-                neighbourList.Add(getCell(pos));
+                neighbourList.Add(getCell(npos));
             }
             return neighbourList;
+        }
+
+        public void Place(IPlayer player)
+        {
+            string placePos;
+            while (true)
+            {
+                placePos = player.getMove("Select position to place your piece: ");
+                if (board[placePos].getState == Player.None)
+                {
+                    break;
+                }
+                Console.WriteLine("Please select a valid position");
+            }
+            board[placePos].changeState(player.playerID);
+            player.reduceStones();
+            if (isInMill(placePos))
+                Shoot(player);
         }
 
         public void Move(IPlayer player)
@@ -148,77 +198,212 @@ namespace Morabaraba_9001
                 piecePos = player.getMove("Select piece to move: ");
                 if (board[piecePos].getState == player.playerID)
                 {
-                    List<ICell> emptyNeighbours = 
-                        (from cell in getNeighbours(getCell(piecePos))
-                         where cell.getState == Player.None
-                         select cell).ToList();
-                    if (emptyNeighbours.Count() > 0)
-                    {
+                    if (player.isFlying() || isMovable(piecePos))
                         break;
-                    }
                 }
+                Display("");
+                Console.WriteLine("Please select a valid piece");
             }
 
             while (true)
             {
-                placePos = player.getMove("Select position to place" + piecePos + ": ");
-                if (board[piecePos].getState == player.playerID)
+                placePos = player.getMove("Select position to place " + piecePos + ": ");
+                if ((player.isFlying() || neighbours[piecePos].Contains(placePos)) && board[placePos].getState == Player.None)
                 {
-                    
+                    break;
                 }
+                Display("");
+                Console.WriteLine("Please select a valid position");
             }
 
             board[placePos].changeState(board[piecePos].getState);
             board[piecePos].changeState(Player.None);
+            if (isInMill(placePos))
+            {
+                Display("");
+                Shoot(player);
+            }
         }
-        
+
         public void Shoot(IPlayer player)
         {
             string shootPos;
             while (true)
             {
-                shootPos = player.getMove("Select piece to move: ");
-                if (board[shootPos].getState == player.getOpponent())
+                shootPos = player.getMove("Select piece to shoot: ");
+                if (board[shootPos].getState == player.getOpponent() && (!isInMill(shootPos) || allInMill(player.getOpponent())))
                 {
-                    break;
+                    board[shootPos].changeState(Player.None);
+                    return;
+                }
+                Console.WriteLine("Please select a valid piece to shoot");
+            }
+           
+        }
+
+        public bool isMovable(string pos)
+        {
+            List<ICell> emptyNeighbours =
+                (from cell in getNeighbours(pos)
+                 where cell.getState == Player.None
+                 select cell).ToList();
+            return emptyNeighbours.Count > 0;
+        }
+
+        public bool canPlay(IPlayer player)
+        {
+            if (numCows(player.playerID) <= 3)
+                return true;
+            IEnumerable<string> query =
+                from pos in board.Keys
+                where board[pos].getState == player.playerID
+                where isMovable(pos)
+                select pos;
+            return query.Any();
+        }
+
+        public bool allInMill(Player player)
+        {
+            foreach (string pos in board.Keys)
+            {
+                if (board[pos].getState == player && !isInMill(pos))
+                    return false;
+            }
+            return true;
+        }
+
+        public bool isInMill(string pos)
+        {
+            List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
+            foreach (ICell[] mill in relevantmills.Select(mill => mill.Select(getCell).ToArray()).ToList())
+            {
+                if ((mill[0].getState == Player.X && mill[1].getState == Player.X && mill[2].getState == Player.X) ||
+                    (mill[0].getState == Player.O && mill[1].getState == Player.O && mill[2].getState == Player.O))
+                {
+                    return true;
                 }
             }
-            board[shootPos].changeState(Player.None);
+            return false;
+        }
+
+        public string playerToString(Player player)
+        {
+            if (player == Player.O)
+                return "O";
+            else if (player == Player.X)
+                return "X";
+            return " ";
+        }
+
+        public void Display(string extraDisplay)
+        {
+            Console.Clear();
+            string[] cells = board.Values.Select(cell => playerToString(cell.getState)).ToArray();
+            string dis =
+                $@"
+    1   2  3   4   5  6   7
+A   {cells[0]}----------{cells[1]}----------{cells[2]}
+|   | '.       |        .'|
+B   |   {cells[3]}------{cells[4]}------{cells[5]}   |
+|   |   |'.    |    .'|   |
+C   |   |  {cells[6]}---{cells[7]}---{cells[8]}  |   |
+|   |   |  |       |  |   |
+D   {cells[9]}---{cells[10]}--{cells[11]}       {cells[12]}--{cells[13]}---{cells[14]}
+|   |   |  |       |  |   |
+E   |   |  {cells[15]}---{cells[16]}---{cells[17]}  |   |
+|   |   |.'    |    '.|   |
+F   |   {cells[18]}------{cells[19]}------{cells[20]}   |
+|   |.'        |       '. |
+G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
+
+            Console.WriteLine(extraDisplay);
+            Console.WriteLine(dis);
         }
     }
-    
 
     public class MorabarabaManager : IGameManager
     {
-        
-        public void endGame()
+        private IPlayer xPlayer = new GamePlayer(Player.X);
+        private IPlayer oPlayer = new GamePlayer(Player.O);
+        private IBoard gameBoard = new Board();
+
+        public void placingPhase()
         {
-            throw new NotImplementedException();
+            IPlayer currPlayer = xPlayer;
+            while (currPlayer.stones > 0)
+            {
+                gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
+                gameBoard.Place(currPlayer);
+
+                if (currPlayer == xPlayer)
+                    currPlayer = oPlayer;
+                else
+                    currPlayer = xPlayer;
+            }
         }
 
         public void movingPhase()
         {
-            throw new NotImplementedException();
-        }
+            IPlayer currPlayer = xPlayer;
+            while (true)
+            {
+                gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
 
-        public void placingPhase()
-        {
-            throw new NotImplementedException();
-        }
+                if (currPlayer.stones == 3)
+                    currPlayer.makeFlying();
 
-        public void startGame()
-        {
-            throw new NotImplementedException();
+                if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
+                {
+                    Console.WriteLine("O wins!");
+                    break;
+                }
+                if (gameBoard.numCows(Player.O) < 3 || !gameBoard.canPlay(oPlayer))
+                {
+                    Console.WriteLine("X wins!");
+                    break;
+                }
+
+                gameBoard.Move(currPlayer);
+
+                if (currPlayer == xPlayer)
+                    currPlayer = oPlayer;
+                else
+                    currPlayer = xPlayer;
+            }
         }
     }
+
     public class GamePlayer : IPlayer
     {
         public GamePlayer(Player player)
         {
             gameplayer = player;
+            numStones = 12;
         }
-        Player gameplayer;
+
+        private int numStones;
+        private bool flying = false;
+
+        public void makeFlying()
+        {
+            flying = true;
+        }
+        public bool isFlying()
+        {
+            return flying;
+        }
+
+        private Player gameplayer;
+
+        public int stones => numStones;
+
+        public void reduceStones()
+        {
+            numStones--;
+        }
+
         public Player playerID => gameplayer;
+
         public Player getOpponent()
         {
             if (gameplayer == Player.X)
@@ -227,6 +412,7 @@ namespace Morabaraba_9001
             }
             return Player.X;
         }
+
         public string getMove(string prompt)
         {
             string input;
@@ -243,13 +429,15 @@ namespace Morabaraba_9001
             return input;
         }
     }
-    class Program
-    {
-        
 
-        static void Main(string[] args)
+    internal class Program
+    {
+        private static void Main(string[] args)
         {
-            
+            IGameManager manager = new MorabarabaManager();
+            manager.placingPhase();
+            manager.movingPhase();
+            Console.ReadLine();
         }
     }
 }
