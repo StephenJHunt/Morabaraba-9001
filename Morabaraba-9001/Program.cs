@@ -9,7 +9,7 @@ namespace Morabaraba_9001
 
     public interface IBoard
     {
-        List<ICell> Cows(Player player);
+        int numCows(Player player);
         void Place(IPlayer player);
         void Move(IPlayer player);
         void Shoot(IPlayer player);
@@ -124,12 +124,12 @@ namespace Morabaraba_9001
             }
         }
 
-        public List<ICell> Cows(Player player)
+        public int numCows(Player player)
         {
             var query = from cell in board.Values.ToList()
                         where cell.getState == player
                         select cell;
-            return query.ToList();
+            return query.Count();
         }
 
         public ICell getCell(string pos)
@@ -224,6 +224,8 @@ namespace Morabaraba_9001
 
         public bool canPlay(IPlayer player)
         {
+            if (numCows(player.playerID) <= 3)
+                return true;
             var query =
                 from pos in board.Keys
                 where board[pos].getState == player.playerID
