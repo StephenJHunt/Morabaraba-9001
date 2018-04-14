@@ -84,7 +84,7 @@ namespace Morabaraba_9001
             { "G4", new List<string> { "G1", "F4", "G7" } },
             { "G7", new List<string> { "G4", "F6", "D7" } }
         };
-        public static List<string[]> mills = new List<List<string>>
+        public static List<string[]> mills = new List<string[]>
         {
             new string[] {"A1", "A4", "A7"},
             new string[] {"B2", "B4", "B6"},
@@ -199,7 +199,7 @@ namespace Morabaraba_9001
         {
             foreach (string pos in board.Keys)
             {
-                if (board[pos].getState == player && !isInMill(board[pos]))
+                if (board[pos].getState == player && !isInMill(pos))
                     return false; 
             }
             return true;
@@ -207,13 +207,13 @@ namespace Morabaraba_9001
 
         public bool isInMill(string pos)
         {
-            List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos));
-            List<ICell[]> millStates = relevantmills.Select(mill => mill.Select(p => getCell(p)));
+            List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
+            List<ICell[]> millStates = relevantmills.Select(mill => mill.Select(p => getCell(p)).ToArray()).ToList();
             
             foreach (ICell[] mill in millStates)
             {
-                if ((mill[0] == Player.X && mill[1] == Player.X && mill[2] == Player.X) ||
-                    (mill[0] == Player.O && mill[1] == Player.O && mill[2] == Player.O))
+                if ((mill[0].getState == Player.X && mill[1].getState == Player.X && mill[2].getState == Player.X) ||
+                    (mill[0].getState == Player.O && mill[1].getState == Player.O && mill[2].getState == Player.O))
                 {
                     return true;
                 }
