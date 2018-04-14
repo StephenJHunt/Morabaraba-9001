@@ -30,6 +30,8 @@ namespace Morabaraba_9001
         Player playerID { get; }
         string getMove(string prompt);
         Player getOpponent();
+        int stones { get;  }
+        void reduceStones();
     }
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
@@ -159,6 +161,7 @@ namespace Morabaraba_9001
                 Console.WriteLine("Please select a valid position");
             }
             board[placePos].changeState(player.playerID);
+            player.reduceStones();
             if (isInMill(placePos))
                 Shoot(player);
         }
@@ -284,15 +287,23 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MorabarabaManager : IGameManager
     {
-        
-        public void endGame()
-        {
-            throw new NotImplementedException();
-        }
+        IPlayer xPlayer = new GamePlayer(Player.X);
+        IPlayer oPlayer = new GamePlayer(Player.O);
+        IBoard gameBoard = new Board();
 
         public void movingPhase()
         {
-            throw new NotImplementedException();
+            IPlayer currPlayer = xPlayer;
+            while(currPlayer.stones > 0)
+            {
+                gameBoard.Display($@"X stones:{xPlayer.stones} OStones:{oPlayer.stones}");
+                gameBoard.Place(currPlayer);
+                
+                if (currPlayer == xPlayer)
+                    currPlayer = oPlayer;
+                else
+                    currPlayer = xPlayer;
+            }
         }
 
         public void placingPhase()
@@ -304,15 +315,30 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             throw new NotImplementedException();
         }
+        public void endGame()
+        {
+            throw new NotImplementedException();
+        }
     }
     public class GamePlayer : IPlayer
     {
         public GamePlayer(Player player)
         {
             gameplayer = player;
+            numStones = 12;
         }
+
+        int numStones;
+
         Player gameplayer;
+
+        public int stones => numStones;
+        public void reduceStones()
+        {
+            numStones--;
+        }
         public Player playerID => gameplayer;
+
         public Player getOpponent()
         {
             if (gameplayer == Player.X)
@@ -321,6 +347,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
             return Player.X;
         }
+
         public string getMove(string prompt)
         {
             string input;
@@ -341,7 +368,8 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     {
         static void Main(string[] args)
         {
-
+            IGameManager manager = new MorabarabaManager();
+            manager.movingPhase();
         }
     }
 }
