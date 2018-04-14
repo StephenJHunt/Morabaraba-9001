@@ -39,11 +39,8 @@ namespace Morabaraba_9001
     public enum Player { X, O, None }
     public interface IGameManager
     {
-        void startGame();
         void placingPhase();
         void movingPhase();
-        void endGame();
-
     }
     public class invalidMoveException : ApplicationException { }
     public class Cell : ICell
@@ -179,6 +176,7 @@ namespace Morabaraba_9001
                     if (player.isFlying() || isMovable(piecePos))
                         break;
                 }
+                Display("");
                 Console.WriteLine("Please select a valid piece");
             }
 
@@ -189,13 +187,17 @@ namespace Morabaraba_9001
                 {
                     break;
                 }
+                Display("");
                 Console.WriteLine("Please select a valid position");
             }
 
             board[placePos].changeState(board[piecePos].getState);
             board[piecePos].changeState(Player.None);
             if (isInMill(placePos))
+            {
+                Display("");
                 Shoot(player);
+            }
         }
 
         public void Shoot(IPlayer player)
@@ -325,18 +327,25 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             IPlayer currPlayer = xPlayer;
             while (true)
             {
-                gameBoard.Display($@"X cows:{gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
-                gameBoard.Move(currPlayer);
-            }
-        }
+                gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
 
-        public void startGame()
-        {
-            throw new NotImplementedException();
-        }
-        public void endGame()
-        {
-            throw new NotImplementedException();
+                if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
+                {
+                    Console.WriteLine("O wins!");
+                    break;
+                }
+                if (gameBoard.numCows(Player.O) < 3 || !gameBoard.canPlay(oPlayer))
+                {
+                    Console.WriteLine("X wins!");
+                    break;
+                }
+                gameBoard.Move(currPlayer);
+
+                if (currPlayer == xPlayer)
+                    currPlayer = oPlayer;
+                else
+                    currPlayer = xPlayer;
+            }
         }
     }
     public class GamePlayer : IPlayer
@@ -390,6 +399,8 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             IGameManager manager = new MorabarabaManager();
             manager.movingPhase();
+            manager.placingPhase();
+            Console.WriteLine();
         }
     }
 }
