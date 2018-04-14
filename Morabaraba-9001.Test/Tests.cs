@@ -17,7 +17,7 @@ namespace Morabaraba_9001.Test
             bool isEmpty = true;
             foreach (ICell cell in b.board.Values)
             {
-                if (cell.getState != CellState.Empty)
+                if (cell.getState != Player.None)
                 {
                     isEmpty = false;
                 }
@@ -53,10 +53,10 @@ namespace Morabaraba_9001.Test
         }
         //moving
         [Test]
-        public void ANormalCowCanOnlyMoveToAConnectedSpace(ICell cowCell, ICell moveCell)
+        public void ANormalCowCanOnlyMoveToAConnectedSpace(string cowPos, ICell moveCell)
         {
             Board b = new Board();
-            Assert.That(b.getNeighbours(cowCell).Contains(moveCell));
+            Assert.That(b.getNeighbours(cowPos).Contains(moveCell));
         }
         [Test]
         public void CowCanOnlyMoveToEmptySpace(string moveCell)
@@ -69,11 +69,12 @@ namespace Morabaraba_9001.Test
         public void MovingDoesNotChangeCowNumbers()
         {
             Board b = new Board();
-            Player p = new Player();
-            List<ICell> beforeMovePieces = b.Cows(p);
-            b.Move(p);
-            List<ICell> afterMovePieces = b.Cows(p);
-            Assert.That(beforeMovePieces.Length == afterMovePieces.Length);
+            Player p = Player.O;
+            GamePlayer pl = new GamePlayer(p);
+            int beforeMovePieces = b.numCows(p);
+            b.Move(pl);
+            int afterMovePieces = b.numCows(p);
+            Assert.That(beforeMovePieces == afterMovePieces);
         }
         //flying
         [Test]
@@ -100,34 +101,35 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ShootingOnlyPossibleOnMillCreation()
         {
-            Board b = Substitute.For<IBoard>();
+            Board b = Substitute.For<Board>();
             //somehow check that shoot is called only when move makes a mill
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
         {
-            Board b = new Board();
-            GamePlayer player = new GamePlayer();
-            foreach (ICell cow in b.Cows(player))
-            {
-                if (!cow.isInMill)
-                {
-                    b.DidNotRecieveWithAnyArgs().Shoot();
-                }
-            }
+            //Board b = Substitute.For<Board>();
+            //Player p = new Player();
+            //GamePlayer player = new GamePlayer(p);
+            //foreach (ICell cow in b.Cows(player))
+            //{
+            //    if (!cow.isInMill)
+            //    {
+            //        b.DidNotRecieveWithAnyArgs().Shoot();
+            //    }
+            //}
         }
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-            Board b = new Board();
-            GamePlayer player = new GamePlayer();
-            foreach (ICell cow in b.Cows(player))
-            {
-                if (!cow.isInMill)
-                {
-                    b.ReceivedWithAnyArgs.Shoot();
-                }
-            }
+            //Board b = new Board();
+            //GamePlayer player = new GamePlayer();
+            //foreach (ICell cow in b.Cows(player))
+            //{
+            //    if (!cow.isInMill)
+            //    {
+            //        b.ReceivedWithAnyArgs.Shoot();
+            //    }
+            //}
         }
         [Test]
         public void CannotShootOwnCows()//baka!
