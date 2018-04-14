@@ -33,6 +33,7 @@ namespace Morabaraba_9001
         Player getOpponent();
         int stones { get;  }
         void reduceStones();
+        bool isFlying();
     }
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
@@ -175,8 +176,7 @@ namespace Morabaraba_9001
                 piecePos = player.getMove("Select piece to move: ");
                 if (board[piecePos].getState == player.playerID)
                 {
-
-                    if (isMovable(piecePos))
+                    if (player.isFlying() || isMovable(piecePos))
                         break;
                 }
                 Console.WriteLine("Please select a valid piece");
@@ -185,7 +185,7 @@ namespace Morabaraba_9001
             while (true)
             {
                 placePos = player.getMove("Select position to place " + piecePos + ": ");
-                if (neighbours[piecePos].Contains(placePos) && board[placePos].getState == Player.None)
+                if ((player.isFlying() || neighbours[piecePos].Contains(placePos)) && board[placePos].getState == Player.None)
                 {
                     break;
                 }
@@ -197,7 +197,7 @@ namespace Morabaraba_9001
             if (isInMill(placePos))
                 Shoot(player);
         }
-        
+
         public void Shoot(IPlayer player)
         {
             string shootPos;
@@ -310,7 +310,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             IPlayer currPlayer = xPlayer;
             while(currPlayer.stones > 0)
             {
-                gameBoard.Display($@"X stones:{xPlayer.stones} OStones:{oPlayer.stones}");
+                gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
                 gameBoard.Place(currPlayer);
                 
                 if (currPlayer == xPlayer)
@@ -322,7 +322,12 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
         public void placingPhase()
         {
-            throw new NotImplementedException();
+            IPlayer currPlayer = xPlayer;
+            while (true)
+            {
+                gameBoard.Display($@"X cows:{gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
+                gameBoard.Move(currPlayer);
+            }
         }
 
         public void startGame()
@@ -341,8 +346,9 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             gameplayer = player;
             numStones = 12;
         }
-
         int numStones;
+
+        public bool isFlying() { return numStones > 3; }
 
         Player gameplayer;
 
