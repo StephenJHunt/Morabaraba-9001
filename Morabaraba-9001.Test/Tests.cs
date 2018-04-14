@@ -68,13 +68,18 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MovingDoesNotChangeCowNumbers()
         {
-
+            Board b = new Board();
+            Player p = new Player();
+            List<ICell> beforeMovePieces = b.Cows(p);
+            b.Move(p);
+            List<ICell> afterMovePieces = b.Cows(p);
+            Assert.That(beforeMovePieces.Length == afterMovePieces.Length);
         }
         //flying
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
-
+            //check isflying when plater reaches 3 cows
         }
         //general
         [Test]
