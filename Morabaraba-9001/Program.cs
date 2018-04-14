@@ -49,6 +49,8 @@ namespace Morabaraba_9001
         void reduceStones();
 
         bool isFlying();
+
+        void makeFlying();
     }
 
     //public enum CellState { X, O, Empty }
@@ -324,7 +326,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         private IPlayer oPlayer = new GamePlayer(Player.O);
         private IBoard gameBoard = new Board();
 
-        public void movingPhase()
+        public void placingPhase()
         {
             IPlayer currPlayer = xPlayer;
             while (currPlayer.stones > 0)
@@ -339,12 +341,15 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public void placingPhase()
+        public void movingPhase()
         {
             IPlayer currPlayer = xPlayer;
             while (true)
             {
                 gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
+
+                if (currPlayer.stones == 3)
+                    currPlayer.makeFlying();
 
                 if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
                 {
@@ -356,6 +361,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
                     Console.WriteLine("X wins!");
                     break;
                 }
+
                 gameBoard.Move(currPlayer);
 
                 if (currPlayer == xPlayer)
@@ -375,10 +381,15 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         }
 
         private int numStones;
+        private bool flying = false;
 
+        public void makeFlying()
+        {
+            flying = true;
+        }
         public bool isFlying()
         {
-            return numStones > 3;
+            return flying;
         }
 
         private Player gameplayer;
@@ -423,9 +434,9 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         private static void Main(string[] args)
         {
             IGameManager manager = new MorabarabaManager();
-            manager.movingPhase();
             manager.placingPhase();
-            Console.WriteLine();
+            manager.movingPhase();
+            Console.ReadLine();
         }
     }
 }
