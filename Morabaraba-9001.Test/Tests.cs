@@ -119,7 +119,15 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-
+            Board b = new Board();
+            GamePlayer player = new GamePlayer();
+            foreach (ICell cow in b.Cows(player))
+            {
+                if (!cow.isInMill)
+                {
+                    b.ReceivedWithAnyArgs.Shoot();
+                }
+            }
         }
         [Test]
         public void CannotShootOwnCows()//baka!
