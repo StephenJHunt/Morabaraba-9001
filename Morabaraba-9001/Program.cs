@@ -18,6 +18,7 @@ namespace Morabaraba_9001
         bool isMovable(string pos);
         bool isInMill(string pos);
         bool allInMill(Player player);
+        void Display();
     }
     public interface ICell
     {
@@ -111,6 +112,7 @@ namespace Morabaraba_9001
             new string[] { "A7", "B6", "C5"}
         }; 
         public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+
         public Board()
         {
             foreach (string pos in validPositions)//initialising board with empty values
@@ -118,6 +120,7 @@ namespace Morabaraba_9001
                 board.Add(pos, new Cell());
             }
         }
+
         public List<ICell> Cows(Player player)
         {
             var query = from cell in board.Values.ToList()
@@ -130,8 +133,6 @@ namespace Morabaraba_9001
         {
             return board[pos];
         }
-
-
 
         public List<ICell> getNeighbours(string pos)
         {
@@ -242,6 +243,40 @@ namespace Morabaraba_9001
             }
             return false;
         }
+
+        public string playerToString(Player player)
+        {
+            if (player == Player.O)
+                return "O";
+            else if (player == Player.X)
+                return "X";
+            return " ";
+        }
+
+        public void Display()
+        {
+            string[] cells = board.Values.Select(cell => playerToString(cell.getState)).ToArray();
+            string dis =
+                $@"    
+    1   2  3   4   5  6   7      
+A   {cells[0]}----------{cells[1]}----------{cells[2]}   
+|   | '.       |        .'|      
+B   |   {cells[3]}------{cells[4]}------{cells[5]}   |   
+|   |   |'.    |    .'|   |      
+C   |   |  {cells[6]}---{cells[7]}---{cells[8]}  |   |   
+|   |   |  |       |  |   |      
+D   {cells[9]}---{cells[10]}--{cells[11]}       {cells[12]}--{cells[13]}---{cells[14]}
+|   |   |  |       |  |   |      
+E   |   |  {cells[15]}---{cells[16]}---{cells[17]}  |   |   
+|   |   |.'    |    '.|   |      
+F   |   {cells[18]}------{cells[19]}------{cells[20]}   |   
+|   |.'        |       '. |      
+G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
+
+            Console.WriteLine(dis);
+        }
+
+
     }
     
 
@@ -306,7 +341,7 @@ namespace Morabaraba_9001
 
         static void Main(string[] args)
         {
-            
+
         }
     }
 }
