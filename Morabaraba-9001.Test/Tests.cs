@@ -85,27 +85,36 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MillIsFormedBy3SameCowsInALine()
         {
-
+            //Assert.That isinMill returns true if given a cow that forms a mill
         }
         [Test]
         public void MillNotFormedWhenNotSamePlayer()
         {
-
+            //Assert.That isInMill only checks one player
         }
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()
         {
-
+            //Assert.That mill list exists and is not null
         }
         [Test]
         public void ShootingOnlyPossibleOnMillCreation()
         {
-
+            Board b = Substitute.For<IBoard>();
+            //somehow check that shoot is called only when move makes a mill
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
         {
-
+            Board b = new Board();
+            GamePlayer player = new GamePlayer();
+            foreach (ICell cow in b.Cows(player))
+            {
+                if (!cow.isInMill)
+                {
+                    b.DidNotRecieveWithAnyArgs().Shoot();
+                }
+            }
         }
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
