@@ -19,6 +19,7 @@ namespace Morabaraba_9001
         bool isInMill(string pos);
         bool allInMill(Player player);
         void Display(string extraDisplay);
+        bool canPlay(IPlayer player);
     }
     public interface ICell
     {
@@ -219,6 +220,17 @@ namespace Morabaraba_9001
              where cell.getState == Player.None
              select cell).ToList();
             return emptyNeighbours.Count() > 0;
+        }
+
+        public bool canPlay(IPlayer player)
+        {
+            var query =
+                from pos in board.Keys
+                where board[pos].getState == player.playerID
+                where isMovable(pos)
+                select pos;
+            return query.Count() > 0;
+                
         }
 
         public bool allInMill(Player player)
