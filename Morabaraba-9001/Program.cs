@@ -18,7 +18,7 @@ namespace Morabaraba_9001
         bool isMovable(string pos);
         bool isInMill(string pos);
         bool allInMill(Player player);
-        void Display();
+        void Display(string extraDisplay);
     }
     public interface ICell
     {
@@ -253,7 +253,7 @@ namespace Morabaraba_9001
             return " ";
         }
 
-        public void Display()
+        public void Display(string extraDisplay)
         {
             Console.Clear();
             string[] cells = board.Values.Select(cell => playerToString(cell.getState)).ToArray();
@@ -274,6 +274,7 @@ F   |   {cells[18]}------{cells[19]}------{cells[20]}   |
 |   |.'        |       '. |      
 G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
+            Console.WriteLine(extraDisplay);
             Console.WriteLine(dis);
         }
 
@@ -338,8 +339,6 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     }
     class Program
     {
-        
-
         static void Main(string[] args)
         {
 
