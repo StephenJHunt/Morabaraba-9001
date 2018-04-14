@@ -6,7 +6,6 @@ namespace Morabaraba_9001
 {
     public interface IBoard
     {
-        // test comment
         int numCows(Player player);
 
         void Place(IPlayer player);
@@ -149,9 +148,10 @@ namespace Morabaraba_9001
 
         public int numCows(Player player)
         {
-            var query = from cell in board.Values.ToList()
-                        where cell.getState == player
-                        select cell;
+            IEnumerable<ICell> query =
+                from cell in board.Values.ToList()
+                where cell.getState == player
+                select cell;
             return query.Count();
         }
 
@@ -176,10 +176,9 @@ namespace Morabaraba_9001
             while (true)
             {
                 placePos = player.getMove("Select position to place your piece: ");
-                if (board[placePos].getState == Player.None)
+                if (board[placePos].getState == Player.None && isMovable(placePos))
                 {
-                    if (isMovable(placePos))
-                        break;
+                    break;
                 }
                 Console.WriteLine("Please select a valid position");
             }
@@ -242,22 +241,22 @@ namespace Morabaraba_9001
         public bool isMovable(string pos)
         {
             List<ICell> emptyNeighbours =
-            (from cell in getNeighbours(pos)
-             where cell.getState == Player.None
-             select cell).ToList();
-            return emptyNeighbours.Count() > 0;
+                (from cell in getNeighbours(pos)
+                 where cell.getState == Player.None
+                 select cell).ToList();
+            return emptyNeighbours.Count > 0;
         }
 
         public bool canPlay(IPlayer player)
         {
             if (numCows(player.playerID) <= 3)
                 return true;
-            var query =
+            IEnumerable<string> query =
                 from pos in board.Keys
                 where board[pos].getState == player.playerID
                 where isMovable(pos)
                 select pos;
-            return query.Count() > 0;
+            return query.Any();
         }
 
         public bool allInMill(Player player)
@@ -273,9 +272,7 @@ namespace Morabaraba_9001
         public bool isInMill(string pos)
         {
             List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
-            List<ICell[]> millStates = relevantmills.Select(mill => mill.Select(p => getCell(p)).ToArray()).ToList();
-
-            foreach (ICell[] mill in millStates)
+            foreach (ICell[] mill in relevantmills.Select(mill => mill.Select(getCell).ToArray()).ToList())
             {
                 if ((mill[0].getState == Player.X && mill[1].getState == Player.X && mill[2].getState == Player.X) ||
                     (mill[0].getState == Player.O && mill[1].getState == Player.O && mill[2].getState == Player.O))
