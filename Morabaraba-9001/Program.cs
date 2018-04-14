@@ -178,7 +178,7 @@ namespace Morabaraba_9001
             while (true)
             {
                 placePos = player.getMove("Select position to place your piece: ");
-                if (board[placePos].getState == Player.None && isMovable(placePos))
+                if (board[placePos].getState == Player.None)
                 {
                     break;
                 }
@@ -233,11 +233,12 @@ namespace Morabaraba_9001
                 shootPos = player.getMove("Select piece to shoot: ");
                 if (board[shootPos].getState == player.getOpponent() && (!isInMill(shootPos) || allInMill(player.getOpponent())))
                 {
-                    break;
+                    board[shootPos].changeState(Player.None);
+                    return;
                 }
                 Console.WriteLine("Please select a valid piece to shoot");
             }
-            board[shootPos].changeState(Player.None);
+           
         }
 
         public bool isMovable(string pos)
