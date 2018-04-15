@@ -325,16 +325,15 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MorabarabaManager : IGameManager
     {
-        public MorabarabaManager(IPlayer x, IPlayer o)
+        public MorabarabaManager()
         {
-            xPlayer = x;
-            oPlayer = o;
+            xPlayer = new GamePlayer(Player.X);
+            oPlayer = new GamePlayer(Player.O);
             currPlayer = xPlayer;
         }
 
-        private IPlayer xPlayer = new GamePlayer(Player.X);
-        private IPlayer oPlayer = new GamePlayer(Player.O);
-        private IBoard gameBoard = new Board();
+        public IPlayer xPlayer, oPlayer;
+        public IBoard gameBoard = new Board();
         public IPlayer currPlayer;
         public void placingPhase()
         {
@@ -447,7 +446,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     {
         private static void Main(string[] args)
         {
-            IGameManager manager = new MorabarabaManager(new GamePlayer(Player.X), new GamePlayer(Player.O));
+            IGameManager manager = new MorabarabaManager();
             manager.placingPhase();
             manager.movingPhase();
             Console.ReadLine();
