@@ -163,19 +163,22 @@ namespace Morabaraba_9001.Test
         public void ShootingOnlyPossibleOnMillCreation()//confusion
         {
             //check shooting is only possible by showing that it only happens once even with many pieces being placed, during which only one mill is formed
-            Board b = Substitute.For<Board>();
+            Board b = new Board();
+            
             IPlayer x = Substitute.For<IPlayer>();
-            x.setID(Player.X);
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
             IPlayer o = Substitute.For<IPlayer>();
-            o.setID(Player.O);
-            o.getMove(Arg.Any<string>()).Returns("G1", "G4");
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            o.getMove(Arg.Any<string>()).Returns("G1");
+            b.Place(o);
             x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1");
-            b.Place(o);
-            b.Place(o);
             b.Place(x);
             b.Place(x);
-            b.Place(x); 
-            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None && b.board["G4"].getState == o.playerID);
+            b.Place(x);
+            Assert.That(b.board["A1"].getState == x.playerID &&b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None);
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
