@@ -234,6 +234,22 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CannotShootOwnCows()//baka!
         {
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            x.getMove(Arg.Any<string>()).Returns("A1");
+            b.Place(x);
+            o.getMove(Arg.Any<string>()).Returns("A4");
+            b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");
+            b.Shoot(x);
+
+            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == Player.None);
             //4
         }
         [Test]
