@@ -242,24 +242,39 @@ namespace Morabaraba_9001.Test
             o.playerID.Returns(Player.O);
             o.getOpponent().Returns(Player.X);
 
-            x.getMove(Arg.Any<string>()).Returns("A1");
+            x.getMove(Arg.Any<string>()).Returns("A1");//set own piece to try shoot at A1
             b.Place(x);
-            o.getMove(Arg.Any<string>()).Returns("A4");
+            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
             b.Place(o);
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4");
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot own cow at A1 then shoots opponent at A4 to break out of loop
             b.Shoot(x);
 
-            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == Player.None);
+            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == Player.None);//check that own piece is untouched and opponent is shot
             //4
         }
         [Test]
         public void CannotShootEmptySpace()
         {
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+            
+            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
+            b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot empty cell at A1 then shoots opponent at A4 to break out of loop
+            b.Shoot(x);
+
+            Assert.That(b.board["A1"].getState == Player.None && b.board["A4"].getState == Player.None);//check that A1 was untouched and player was able to still shoot an opponent at A4
             //5
         }
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
+            
             //6
         }
         [Test]
