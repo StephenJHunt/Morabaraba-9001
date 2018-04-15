@@ -145,15 +145,9 @@ namespace Morabaraba_9001.Test
         public void MillNotFormedWhenNotSamePlayer()
         {
             Board b = new Board();
-            IPlayer x = Substitute.For<IPlayer>();
-            IPlayer o = Substitute.For<IPlayer>();
-            x.setID(Player.X);
-            o.setID(Player.O);
-            o.getMove(Arg.Any<string>()).Returns("A7");
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4");
-            b.Place(o);
-            b.Place(x);
-            b.Place(x);
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.O);
+            b.board["A7"] = new Cell(Player.X);
             Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("A7"));
         }
         [Test]
