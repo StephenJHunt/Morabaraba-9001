@@ -304,24 +304,30 @@ namespace Morabaraba_9001.Test
         [Test]
         public void WinIfOpponentCannotMove()
         {
-            //MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            //IBoard b = manager.gameBoard;
-            //IPlayer x = Substitute.For<IPlayer>();
-            //IPlayer o = Substitute.For<IPlayer>();
-            //x.setID(Player.X);
-            //o.setID(Player.O);
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            IBoard b = manager.gameBoard;
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID = Player.X;
+            o.playerID = Player.O;
 
-            //x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
-            //o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A1", "G1", "A7", "G7");
+            o.getMove(Arg.Any<string>()).Returns("D1", "A4", "B2", "B6", "D7", "F6", "G4", "F2");//surrounds X pieces without making mills
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
 
 
-            //Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));
+            Assert.That(manager.movingPhase(), Is.EqualTo("O wins!"));
         }
         [Test]
         public void WinIfOpponentHas2OrLessCowsLeftAfterPlacement()
