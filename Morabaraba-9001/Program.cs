@@ -418,11 +418,15 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
         public Player getOpponent()
         {
-            if (gameplayer == Player.X)
+            if (this.gameplayer == Player.X)
             {
                 return Player.O;
             }
-            return Player.X;
+            else if (this.gameplayer == Player.O)
+            {
+                return Player.X;
+            }
+            return Player.None;
         }
 
         public string getMove(string prompt)
