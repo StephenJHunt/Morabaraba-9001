@@ -285,7 +285,21 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
-            //Assert.That(1 == 2 );
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID = Player.X;
+            IPlayer o = Substitute.For<IPlayer>();
+            o.playerID = Player.O;
+
+            x.getMove(Arg.Any<string>()).Returns("G1");
+            b.Place(x);
+
+            o.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1");
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+            Assert.That(b.board["G1"].getState == Player.None);
         }
         [Test]
         public void WinIfOpponentCannotMove()
