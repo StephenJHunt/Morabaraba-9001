@@ -76,6 +76,14 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MovingDoesNotChangeCowNumbers()
         {
+
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.getMove(Arg.Any<string>()).Returns("A4", "A4", "A1");
+            b.Place(x);
+            int num = b.numCows(x.playerID);
+            b.Move(x);
+            Assert.That(num == b.numCows(x.playerID));
             //Board b = new Board();
             //Player p = Player.O;
             //GamePlayer pl = new GamePlayer(p);
@@ -83,7 +91,7 @@ namespace Morabaraba_9001.Test
             //b.Move(pl);
             //int afterMovePieces = b.numCows(p);
             //Assert.That(beforeMovePieces == afterMovePieces);
-            Assert.That(1 == 2);
+            //Assert.That(1 == 2);
         }
         //flying
         [Test]
