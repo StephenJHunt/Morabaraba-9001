@@ -71,6 +71,7 @@ namespace Morabaraba_9001.Test
 
             //GamePlayer player = new GamePlayer(Player.None);
             //b.DidNotReceiveWithAnyArgs().Move(player);
+            Assert.That(1 == 2);//force fail to remind us to fix
         }
         //moving
         [Test]
@@ -222,12 +223,45 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-            
+            Board b = Substitute.For<Board>();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            IPlayer o = Substitute.For<IPlayer>();
+            o.setID(Player.O);
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "G7", "A1");
+            x.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4", "A7", "G1");
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+
+            Assert.That(b.board["G1"].getState == Player.None);
         }
         [Test]
         public void CannotShootOwnCows()//baka!
         {
-            //Assert.That(1 == 2 );//y
+            IPlayer o = Substitute.For<IPlayer>();
+            o.playerID = Player.O;
+            Board b = Substitute.For<Board>();
+            o.getMove(Arg.Any<string>()).Returns("A1");
+            b.Place(o);
+            Assert.That(b.board["A1"].getState == Player.O);
+            //GamePlayer x = new GamePlayer(Player.X);
+            //x.setID(Player.X);
+            //GamePlayer o = new GamePlayer(Player.O);
+            //o.setID(Player.O);
+            //o.getMove(Arg.Any<string>()).Returns("G1");
+            //x.getMove(Arg.Any<string>()).Returns("A1", "B2", "A4", "A7", "B2" ,"G1");
+            //b.Place(x);
+            //b.Place(o);
+            //b.Place(x);
+            //b.Place(x);
+            //b.Place(x);
+
+            //Assert.That(b.board["B2"].getState == Player.None);// && b.board["G1"].getState == Player.None
         }
         [Test]
         public void CannotShootEmptySpace()
