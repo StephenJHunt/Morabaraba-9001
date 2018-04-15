@@ -140,8 +140,18 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MillIsFormedBy3SameCowsInALine()
         {
-            //Assert.That isinMill returns true if given a cow that forms a mill
-            //Assert.That(1 == 2 );//y
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            o.setID(Player.O);
+            o.getMove(Arg.Any<string>()).Returns("G1");
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1");
+            b.Place(o);
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            Assert.That(b.isInMill("A1"));// && b.isInMill("A4") && b.isInMill("A7")
         }
         [Test]
         public void MillNotFormedWhenNotSamePlayer()
