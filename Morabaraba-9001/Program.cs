@@ -48,10 +48,6 @@ namespace Morabaraba_9001
 
         void reduceStones();
 
-        bool isFlying();
-
-        void makeFlying();
-
         void setID(Player ID);
     }
 
@@ -348,16 +344,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         }
 
         private int numStones;
-        private bool flying = false;
 
-        public void makeFlying()
-        {
-            flying = true;
-        }
-        public bool isFlying()
-        {
-            return flying;
-        }
 
         private Player gameplayer;
 
@@ -429,7 +416,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             while (true)
             {
                 placePos = player.getMove("Select position to place " + piecePos + ": ");
-                if ((player.isFlying() || Board.neighbours[piecePos].Contains(placePos)) && gboard.board[placePos].getState == Player.None)
+                if ((gboard.numCows(player.playerID) == 3 || Board.neighbours[piecePos].Contains(placePos)) && gboard.board[placePos].getState == Player.None)
                 {
                     return placePos;
                 }

@@ -70,7 +70,6 @@ namespace Morabaraba_9001.Test
         {
             Board b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
-            x.isFlying().Returns(false);
             x.playerID.Returns(Player.X);
             b.board["A1"] = new Cell(x.playerID);
             x.getMove(Arg.Any<string>()).Returns( "A1", "G7", "A4");
@@ -86,7 +85,6 @@ namespace Morabaraba_9001.Test
             b.board["D1"] = new Cell(Player.O);
             b.board["B2"] = new Cell(Player.None);
             IPlayer x = Substitute.For<IPlayer>();
-            x.isFlying().Returns(false);
             x.playerID.Returns(Player.X);
             x.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4", "D1", "B2");
             b.Move(x);
