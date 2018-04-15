@@ -208,6 +208,27 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            x.getMove(Arg.Any<string>()).Returns("A1");//placing an X piece for O to take
+            b.Place(x);
+
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "G7", "A1");//Making O mill and shooting X at A1
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+            x.getMove(Arg.Any<string>()).Returns("G1");//get shoot input
+            b.Shoot(x);
+
+            Assert.That(b.board["G1"].getState == Player.None);//test that the cow in a mill could be shot and was
+
             //3
         }
         [Test]
