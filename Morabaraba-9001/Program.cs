@@ -51,6 +51,8 @@ namespace Morabaraba_9001
         bool isFlying();
 
         void makeFlying();
+
+        void setID(Player ID);
     }
 
     //public enum CellState { X, O, Empty }
@@ -379,6 +381,11 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             gameplayer = player;
             numStones = 12;
+        }
+
+        public void setID(Player ID)
+        {
+            gameplayer = ID;
         }
 
         private int numStones;
