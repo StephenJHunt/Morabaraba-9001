@@ -53,13 +53,17 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowsCannotBeMovedDuringPlacement()//leave for later
         {
-            //int counter = 0;
-            //Board b = Substitute.For<Board>();
-            //IPlayer x = Substitute.For<IPlayer>();
-            //MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            //
-            //b.DidNotReceiveWithAnyArgs().Move(x);
-            //1
+            Board b = Substitute.For<Board>();
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            //placing phase (need some way to break the loop in it for a test)
+
+            //manager.placingPhase();
+            //placing phase
+            IPlayer pl = Substitute.For<IPlayer>();
+            pl.playerID.Returns(Player.X);
+            pl.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4");//get a place input and a move input
+            b.Place(pl);//place the cow
+            b.DidNotReceiveWithAnyArgs().Move(pl);//no moves made when placing a cow
         }
         //moving
         [Test]
