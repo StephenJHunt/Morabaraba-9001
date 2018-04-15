@@ -72,9 +72,9 @@ namespace Morabaraba_9001
         private Player state;
         public Player getState => state;
 
-        public Cell()
+        public Cell(Player startState)
         {
-            state = Player.None;
+            state = startState;
         }
 
         public void changeState(Player changedState)
@@ -146,7 +146,7 @@ namespace Morabaraba_9001
         {
             foreach (string pos in validPositions)//initialising board with empty values
             {
-                board.Add(pos, new Cell());
+                board.Add(pos, new Cell(Player.None));
             }
         }
 
@@ -185,6 +185,8 @@ namespace Morabaraba_9001
 
         public void Move(IPlayer player)
         {
+            if (numCows(player.playerID) == 3)
+                player.makeFlying();
             string piecePos = InputHandler.PickUpInput(player, this);
             string placePos = InputHandler.PutDownInput(piecePos, player, this);
             board[piecePos].changeState(Player.None);
@@ -314,9 +316,6 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             while (true)
             {
                 gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
-
-                if (currPlayer.stones == 3)
-                    currPlayer.makeFlying();
 
                 if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
                 {
