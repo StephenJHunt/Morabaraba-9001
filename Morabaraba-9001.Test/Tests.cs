@@ -109,21 +109,30 @@ namespace Morabaraba_9001.Test
             int num = b.numCows(x.playerID);
             b.Move(x);
             Assert.That(num == b.numCows(x.playerID));
-            //Board b = new Board();
-            //Player p = Player.O;
-            //GamePlayer pl = new GamePlayer(p);
-            //int beforeMovePieces = b.numCows(p);
-            //b.Move(pl);
-            //int afterMovePieces = b.numCows(p);
-            //Assert.That(beforeMovePieces == afterMovePieces);
-            ////Assert.That(1 == 2 );
         }
         //flying
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
-            //check isflying when plater reaches 3 cows
-            //Assert.That(1 == 2 );//y
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            IBoard b = manager.gameBoard;
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            o.setID(Player.O);
+
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            
+            
+            Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));         
+
         }
         //general
         [Test]
