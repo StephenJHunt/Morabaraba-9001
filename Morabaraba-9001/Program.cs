@@ -325,10 +325,17 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MorabarabaManager : IGameManager
     {
-        private static IPlayer xPlayer = new GamePlayer(Player.X);
-        private static IPlayer oPlayer = new GamePlayer(Player.O);
+        public MorabarabaManager(IPlayer x, IPlayer o)
+        {
+            xPlayer = x;
+            oPlayer = o;
+            currPlayer = xPlayer;
+        }
+
+        private IPlayer xPlayer = new GamePlayer(Player.X);
+        private IPlayer oPlayer = new GamePlayer(Player.O);
         private IBoard gameBoard = new Board();
-        public IPlayer currPlayer = xPlayer;
+        public IPlayer currPlayer;
         public void placingPhase()
         {
             while (currPlayer.stones > 0)
@@ -440,7 +447,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     {
         private static void Main(string[] args)
         {
-            IGameManager manager = new MorabarabaManager();
+            IGameManager manager = new MorabarabaManager(new GamePlayer(Player.X), new GamePlayer(Player.O));
             manager.placingPhase();
             manager.movingPhase();
             Console.ReadLine();
