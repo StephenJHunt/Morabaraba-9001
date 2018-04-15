@@ -185,8 +185,6 @@ namespace Morabaraba_9001
 
         public void Move(IPlayer player)
         {
-            if (numCows(player.playerID) == 3)
-                player.makeFlying();
             string piecePos = InputHandler.PickUpInput(player, this);
             string placePos = InputHandler.PutDownInput(piecePos, player, this);
             board[piecePos].changeState(Player.None);
@@ -415,7 +413,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
                 piecePos = player.getMove("Select piece to move: ");
                 if (gboard.board[piecePos].getState == player.playerID)
                 {
-                    if (player.isFlying() || gboard.isMovable(piecePos))
+                    if (gboard.numCows(player.playerID) == 3 || gboard.isMovable(piecePos))
                         return piecePos;
                 }
                 gboard.Display("");
