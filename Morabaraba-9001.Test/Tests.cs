@@ -28,7 +28,6 @@ namespace Morabaraba_9001.Test
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
             MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            IPlayer player = Substitute.For<IPlayer>();
             Assert.That(manager.currPlayer.playerID == Player.X);
         }
         [Test]
@@ -61,15 +60,17 @@ namespace Morabaraba_9001.Test
             Assert.That(Player2.stones == 12);
         }
         [Test]
-        public void CowsCannotBeMovedDuringPlacement()//this one keeps breaking tests. Leave it to last
+        public void CowsCannotBeMovedDuringPlacement()//leave for later
         {
-            //var counter = 0;
-            //IGameManager gm = Substitute.For<IGameManager>();
-            //Board b = Substitute.For<Board>();
-            //gm.When(x => gm.placingPhase()).Do(x => counter++);
+            //MorabarabaManager gm = Substitute.For<MorabarabaManager>();
+            //gm.xPlayer.getMove(Arg.Any<string>()).Returns("A1", "A7", "B4", "C3", "C5", "D2", "D5", "D7", "E4", "F2", "F6", "G4");
+            //gm.oPlayer.getMove(Arg.Any<string>()).Returns("A4", "B2", "B6", "C4", "D1", "D3", "D6", "E3", "E5", "F4", "G1", "G7");
+
+            //IBoard b = gm.gameBoard;
+            //gm.placingPhase();
+
             //GamePlayer player = new GamePlayer(Player.None);
             //b.DidNotReceiveWithAnyArgs().Move(player);
-            //Assert.That(1 == 2 );
         }
         //moving
         [Test]
