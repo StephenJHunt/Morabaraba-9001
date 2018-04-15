@@ -17,7 +17,7 @@ namespace Morabaraba_9001.Test
             bool isEmpty = true;
             foreach (ICell cell in b.board.Values)
             {
-                if (cell.getState != CellState.Empty)
+                if (cell.getState != Player.None)
                 {
                     isEmpty = false;
                 }
@@ -27,132 +27,322 @@ namespace Morabaraba_9001.Test
         [Test]
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
-            MorabarabaManager mbman = new MorabarabaManager();
-            //Assert(mbman.startingPlayer == Player.X);
+            MorabarabaManager manager = new MorabarabaManager();
+            Assert.That(manager.currPlayer.playerID == Player.X);
         }
         [Test]
-        public void CowsCanOnlyBePlayedOnEmptySpaces(string input)
+        public void CowsCanOnlyBePlayedOnEmptySpaces()
         {
-            
+            Board b = Substitute.For<Board>();
+            b.board["A1"] = new Cell(Player.O);
+            b.board["A4"] = new Cell(Player.None);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");
+            b.Place(x);
+            Assert.That(b.board["A1"].getState == Player.O && b.board["A4"].getState == Player.X);
         }
         [Test]
         public void AMaximumOf12PlacementsPerPlayerAreAllowed()
         {
-            //Assert.That(Board.Xpieces == 12);
-            //Assert.That(Board.Ypieces == 12);
+            GamePlayer Player1 = new GamePlayer(Player.X);
+            Assert.That(Player1.stones == 12);
+            GamePlayer Player2 = new GamePlayer(Player.O);
+            Assert.That(Player2.stones == 12);
         }
         [Test]
-        public void CowsCannotBeMovedDuringPlacement()
+        public void CowsCannotBeMovedDuringPlacement()//leave for later
         {
-            IGameManager gm = Substitute.For<IGameManager>();
-            Board b = new Board();
-            gm.placingPhase();
-            Player pl = Player.None;
-            GamePlayer player = new GamePlayer(pl);
-            b.DidNotReceiveWithAnyArgs().Move(player);
+            Board b = Substitute.For<Board>();
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            //placing phase (need some way to break the loop in it for a test)
+
+            //manager.placingPhase();
+            //placing phase
+            IPlayer pl = Substitute.For<IPlayer>();
+            pl.playerID.Returns(Player.X);
+            pl.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4");//get a place input and a move input
+            b.Place(pl);//place the cow
+            b.DidNotReceiveWithAnyArgs().Move(pl);//no moves made when placing a cow
         }
         //moving
         [Test]
-        public void ANormalCowCanOnlyMoveToAConnectedSpace(ICell cowCell, ICell moveCell)
+        public void ANormalCowCanOnlyMoveToAConnectedSpace()
         {
             Board b = new Board();
-            Assert.That(b.getNeighbours(cowCell).Contains(moveCell));
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            b.board["A1"] = new Cell(x.playerID);
+            x.getMove(Arg.Any<string>()).Returns( "A1", "G7", "A4");
+            b.Move(x);
+            x.Received(3).getMove(Arg.Any<string>());
         }
         [Test]
-        public void CowCanOnlyMoveToEmptySpace(string moveCell)
+        public void CowCanOnlyMoveToEmptySpace()
         {
             Board b = new Board();
-            ICell cell = b.board[moveCell];
-            Assert.That(cell.getState == Player.None);
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.X);
+            b.board["D1"] = new Cell(Player.O);
+            b.board["B2"] = new Cell(Player.None);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4", "D1", "B2");
+            b.Move(x);
+            x.Received(5).getMove(Arg.Any<string>());
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
         {
+
             Board b = new Board();
-            Player p = new Player();
-            List<ICell> beforeMovePieces = b.Cows(p);
-            b.Move(p);
-            List<ICell> afterMovePieces = b.Cows(p);
-            Assert.That(beforeMovePieces.Length == afterMovePieces.Length);
+            b.board["A4"] = new Cell(Player.X);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A4", "A1");
+            int old = b.numCows(x.playerID);
+            b.Move(x);
+            Assert.That(b.numCows(x.playerID) == old);
         }
         //flying
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
-            //check isflying when plater reaches 3 cows
+            Board b = new Board();
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.X);
+            b.board["A7"] = new Cell(Player.X);
+            b.board["B2"] = new Cell(Player.X);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+
+            Assert.That(b.numCows(x.playerID) > 3);
+            x.getMove(Arg.Any<string>()).Returns("A1", "G1", "D1");
+            b.Move(x);
+            x.Received(3).getMove(Arg.Any<string>());
+
+            b.board["D1"] = new Cell(Player.None);
+            Assert.That(b.numCows(x.playerID) == 3);
+
+            x.getMove(Arg.Any<string>()).Returns("A4", "G1", "A1");
+            b.Move(x);
+            x.Received(5).getMove(Arg.Any<string>());
+            Assert.That(b.board["G1"].getState == x.playerID);
+            Assert.That(b.board["A1"].getState == Player.None);
         }
         //general
         [Test]
         public void MillIsFormedBy3SameCowsInALine()
         {
-            //Assert.That isinMill returns true if given a cow that forms a mill
+            Board b = new Board();
+            b.board["A1"] = new Cell(Player.X);
+            Assert.That(b.isInMill("A1") == false);
+            b.board["A4"] = new Cell(Player.X);
+            Assert.That(b.isInMill("A1") == false);
+            b.board["A7"] = new Cell(Player.X);
+            Assert.That(b.isInMill("A1") == true);
         }
         [Test]
         public void MillNotFormedWhenNotSamePlayer()
         {
-            //Assert.That isInMill only checks one player
+            Board b = new Board();
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.O);
+            b.board["A7"] = new Cell(Player.X);
+            Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("A7"));
         }
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()
         {
-            //Assert.That mill list exists and is not null
+            Board b = new Board();
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.X);
+            b.board["B4"] = new Cell(Player.X);
+            Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("B4"));
         }
         [Test]
-        public void ShootingOnlyPossibleOnMillCreation()
+        public void ShootingOnlyPossibleOnMillCreation()//confusion
         {
-            Board b = Substitute.For<IBoard>();
-            //somehow check that shoot is called only when move makes a mill
+            //check shooting is only possible by showing that it only happens once even with many pieces being placed, during which only one mill is formed
+            Board b = new Board();
+            
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            IPlayer o = Substitute.For<IPlayer>();
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            o.getMove(Arg.Any<string>()).Returns("G1");
+            b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1");
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            Assert.That(b.board["A1"].getState == x.playerID &&b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None);
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
         {
             Board b = new Board();
-            GamePlayer player = new GamePlayer();
-            foreach (ICell cow in b.Cows(player))
-            {
-                if (!cow.isInMill)
-                {
-                    b.DidNotRecieveWithAnyArgs().Shoot();
-                }
-            }
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            x.getMove(Arg.Any<string>()).Returns("A1");//placing an X piece for O to take
+            b.Place(x);
+
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F2", "G7", "A1");//Making O mill with one piece placed outside and shooting X at A1
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1", "F2");//Making X mill, trying to shoot G1 in mill, failing and shooting F2, which is not in mill
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+
+            Assert.That(b.board["G1"].getState == o.playerID && b.board["F2"].getState == Player.None);//test that the cow in a mill couldnt be shot and the one out could and was
+            //2
         }
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
             Board b = new Board();
-            GamePlayer player = new GamePlayer();
-            foreach (ICell cow in b.Cows(player))
-            {
-                if (!cow.isInMill)
-                {
-                    b.ReceivedWithAnyArgs.Shoot();
-                }
-            }
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            x.getMove(Arg.Any<string>()).Returns("A1");//placing an X piece for O to take
+            b.Place(x);
+
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "G7", "A1");//Making O mill and shooting X at A1
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+            x.getMove(Arg.Any<string>()).Returns("G1");//get shoot input
+            b.Shoot(x);
+
+            Assert.That(b.board["G1"].getState == Player.None);//test that the cow in a mill could be shot and was
+
+            //3
         }
         [Test]
         public void CannotShootOwnCows()//baka!
         {
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
 
+            x.getMove(Arg.Any<string>()).Returns("A1");//set own piece to try shoot at A1
+            b.Place(x);
+            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
+            b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot own cow at A1 then shoots opponent at A4 to break out of loop
+            b.Shoot(x);
+
+            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == Player.None);//check that own piece is untouched and opponent is shot
+            //4
         }
         [Test]
         public void CannotShootEmptySpace()
         {
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+            
+            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
+            b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot empty cell at A1 then shoots opponent at A4 to break out of loop
+            b.Shoot(x);
 
+            Assert.That(b.board["A1"].getState == Player.None && b.board["A4"].getState == Player.None);//check that A1 was untouched and player was able to still shoot an opponent at A4
+            //5
         }
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
 
+            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
+            b.Place(o);
+            x.getMove(Arg.Any<string>()).Returns("A4");//shoots opponent at A4
+            b.Shoot(x);
+
+            Assert.That(b.board["A4"].getState == Player.None);//check that position of shot cow is now empty
+            //6
         }
         [Test]
         public void WinIfOpponentCannotMove()
         {
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            IBoard b = manager.gameBoard;
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID = Player.X;
+            o.playerID = Player.O;
 
+            x.getMove(Arg.Any<string>()).Returns("A1", "G1", "A7", "G7");
+            o.getMove(Arg.Any<string>()).Returns("D1", "A4", "B2", "B6", "D7", "F6", "G4", "F2");//surrounds X pieces without making mills
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+
+            Assert.That(manager.movingPhase(), Is.EqualTo("O wins!"));
         }
         [Test]
         public void WinIfOpponentHas2OrLessCowsLeftAfterPlacement()
         {
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            IBoard b = manager.gameBoard;
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            o.setID(Player.O);
 
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+
+            Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));
         }
     }
 }
