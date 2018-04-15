@@ -5,8 +5,8 @@ using System.Linq;
 
 namespace Morabaraba_9001.Test
 {
-    [TestFixture]
-
+	[TestFixture]
+    
     public class Tests
     {
         //placing
@@ -73,7 +73,7 @@ namespace Morabaraba_9001.Test
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
             b.board["A1"] = new Cell(x.playerID);
-            x.getMove(Arg.Any<string>()).Returns("A1", "G7", "A4");
+            x.getMove(Arg.Any<string>()).Returns( "A1", "G7", "A4");
             b.Move(x);
             x.Received(3).getMove(Arg.Any<string>());
         }
@@ -165,7 +165,7 @@ namespace Morabaraba_9001.Test
         {
             //check shooting is only possible by showing that it only happens once even with many pieces being placed, during which only one mill is formed
             Board b = new Board();
-
+            
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
             x.getOpponent().Returns(Player.O);
@@ -179,7 +179,7 @@ namespace Morabaraba_9001.Test
             b.Place(x);
             b.Place(x);
             b.Place(x);
-            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None);
+            Assert.That(b.board["A1"].getState == x.playerID &&b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None);
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
@@ -266,7 +266,7 @@ namespace Morabaraba_9001.Test
             x.getOpponent().Returns(Player.O);
             o.playerID.Returns(Player.O);
             o.getOpponent().Returns(Player.X);
-
+            
             o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
             b.Place(o);
             x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot empty cell at A1 then shoots opponent at A4 to break out of loop

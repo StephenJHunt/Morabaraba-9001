@@ -407,7 +407,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
                 Console.WriteLine("Please select a valid piece");
             }
 
-
+            
         }
 
         public static string PutDownInput(string piecePos, IPlayer player, Board gboard)
