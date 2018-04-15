@@ -325,13 +325,12 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MorabarabaManager : IGameManager
     {
-        private IPlayer xPlayer = new GamePlayer(Player.X);
-        private IPlayer oPlayer = new GamePlayer(Player.O);
+        private static IPlayer xPlayer = new GamePlayer(Player.X);
+        private static IPlayer oPlayer = new GamePlayer(Player.O);
         private IBoard gameBoard = new Board();
-
+        public IPlayer currPlayer = xPlayer;
         public void placingPhase()
         {
-            IPlayer currPlayer = xPlayer;
             while (currPlayer.stones > 0)
             {
                 gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
@@ -346,7 +345,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
         public void movingPhase()
         {
-            IPlayer currPlayer = xPlayer;
+            currPlayer = xPlayer;
             while (true)
             {
                 gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
