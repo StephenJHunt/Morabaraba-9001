@@ -171,8 +171,14 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()
         {
-            //Assert.That mill list exists and is not null
-            //Assert.That(1 == 2 );//y
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4");
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("B4"));
         }
         [Test]
         public void ShootingOnlyPossibleOnMillCreation()
