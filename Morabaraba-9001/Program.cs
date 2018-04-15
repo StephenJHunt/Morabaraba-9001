@@ -38,7 +38,7 @@ namespace Morabaraba_9001
 
     public interface IPlayer
     {
-        Player playerID { get; }
+        Player playerID { get; set; }
 
         string getMove(string prompt);
 
@@ -48,9 +48,7 @@ namespace Morabaraba_9001
 
         void reduceStones();
 
-        bool isFlying();
-
-        void makeFlying();
+        void setID(Player ID);
     }
 
     //public enum CellState { X, O, Empty }
@@ -60,7 +58,7 @@ namespace Morabaraba_9001
     {
         void placingPhase();
 
-        void movingPhase();
+        string movingPhase();
     }
 
     public class invalidMoveException : ApplicationException { }
@@ -70,9 +68,9 @@ namespace Morabaraba_9001
         private Player state;
         public Player getState => state;
 
-        public Cell()
+        public Cell(Player startState)
         {
-            state = Player.None;
+            state = startState;
         }
 
         public void changeState(Player changedState)
@@ -144,7 +142,7 @@ namespace Morabaraba_9001
         {
             foreach (string pos in validPositions)//initialising board with empty values
             {
-                board.Add(pos, new Cell());
+                board.Add(pos, new Cell(Player.None));
             }
         }
 
@@ -174,16 +172,7 @@ namespace Morabaraba_9001
 
         public void Place(IPlayer player)
         {
-            string placePos;
-            while (true)
-            {
-                placePos = player.getMove("Select position to place your piece: ");
-                if (board[placePos].getState == Player.None)
-                {
-                    break;
-                }
-                Console.WriteLine("Please select a valid position");
-            }
+            string placePos = InputHandler.PlaceInput(player, this);
             board[placePos].changeState(player.playerID);
             player.reduceStones();
             if (isInMill(placePos))
@@ -192,32 +181,10 @@ namespace Morabaraba_9001
 
         public void Move(IPlayer player)
         {
-            string piecePos, placePos;
-            while (true)
-            {
-                piecePos = player.getMove("Select piece to move: ");
-                if (board[piecePos].getState == player.playerID)
-                {
-                    if (player.isFlying() || isMovable(piecePos))
-                        break;
-                }
-                Display("");
-                Console.WriteLine("Please select a valid piece");
-            }
-
-            while (true)
-            {
-                placePos = player.getMove("Select position to place " + piecePos + ": ");
-                if ((player.isFlying() || neighbours[piecePos].Contains(placePos)) && board[placePos].getState == Player.None)
-                {
-                    break;
-                }
-                Display("");
-                Console.WriteLine("Please select a valid position");
-            }
-
-            board[placePos].changeState(board[piecePos].getState);
+            string piecePos = InputHandler.PickUpInput(player, this);
+            string placePos = InputHandler.PutDownInput(piecePos, player, this);
             board[piecePos].changeState(Player.None);
+            board[placePos].changeState(player.playerID);
             if (isInMill(placePos))
             {
                 Display("");
@@ -227,18 +194,8 @@ namespace Morabaraba_9001
 
         public void Shoot(IPlayer player)
         {
-            string shootPos;
-            while (true)
-            {
-                shootPos = player.getMove("Select piece to shoot: ");
-                if (board[shootPos].getState == player.getOpponent() && (!isInMill(shootPos) || allInMill(player.getOpponent())))
-                {
-                    board[shootPos].changeState(Player.None);
-                    return;
-                }
-                Console.WriteLine("Please select a valid piece to shoot");
-            }
-           
+            string shootPos = InputHandler.ShootInput(player, this);
+            board[shootPos].changeState(Player.None);
         }
 
         public bool isMovable(string pos)
@@ -323,13 +280,18 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MorabarabaManager : IGameManager
     {
-        private IPlayer xPlayer = new GamePlayer(Player.X);
-        private IPlayer oPlayer = new GamePlayer(Player.O);
-        private IBoard gameBoard = new Board();
+        public MorabarabaManager()
+        {
+            xPlayer = new GamePlayer(Player.X);
+            oPlayer = new GamePlayer(Player.O);
+            currPlayer = xPlayer;
+        }
 
+        public IPlayer xPlayer, oPlayer;
+        public IBoard gameBoard = new Board();
+        public IPlayer currPlayer;
         public void placingPhase()
         {
-            IPlayer currPlayer = xPlayer;
             while (currPlayer.stones > 0)
             {
                 gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
@@ -342,25 +304,20 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public void movingPhase()
+        public string movingPhase()
         {
-            IPlayer currPlayer = xPlayer;
+            currPlayer = xPlayer;
             while (true)
             {
                 gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
 
-                if (currPlayer.stones == 3)
-                    currPlayer.makeFlying();
-
                 if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
                 {
-                    Console.WriteLine("O wins!");
-                    break;
+                    return "O wins!";
                 }
                 if (gameBoard.numCows(Player.O) < 3 || !gameBoard.canPlay(oPlayer))
                 {
-                    Console.WriteLine("X wins!");
-                    break;
+                    return "X wins!";
                 }
 
                 gameBoard.Move(currPlayer);
@@ -381,17 +338,13 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             numStones = 12;
         }
 
-        private int numStones;
-        private bool flying = false;
+        public void setID(Player ID)
+        {
+            gameplayer = ID;
+        }
 
-        public void makeFlying()
-        {
-            flying = true;
-        }
-        public bool isFlying()
-        {
-            return flying;
-        }
+        private int numStones;
+
 
         private Player gameplayer;
 
@@ -402,15 +355,21 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             numStones--;
         }
 
-        public Player playerID => gameplayer;
+        //public Player playerID => gameplayer;
+
+        Player IPlayer.playerID { get => gameplayer; set => gameplayer = value; }
 
         public Player getOpponent()
         {
-            if (gameplayer == Player.X)
+            if (this.gameplayer == Player.X)
             {
                 return Player.O;
             }
-            return Player.X;
+            else if (this.gameplayer == Player.O)
+            {
+                return Player.X;
+            }
+            return Player.None;
         }
 
         public string getMove(string prompt)
@@ -430,13 +389,78 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         }
     }
 
+
+    public class InputHandler
+    {
+        public static string PickUpInput(IPlayer player, Board gboard)
+        {
+            string piecePos;
+            while (true)
+            {
+                piecePos = player.getMove("Select piece to move: ");
+                if (gboard.board[piecePos].getState == player.playerID)
+                {
+                    if (gboard.numCows(player.playerID) == 3 || gboard.isMovable(piecePos))
+                        return piecePos;
+                }
+                gboard.Display("");
+                Console.WriteLine("Please select a valid piece");
+            }
+
+
+        }
+
+        public static string PutDownInput(string piecePos, IPlayer player, Board gboard)
+        {
+            string placePos;
+            while (true)
+            {
+                placePos = player.getMove("Select position to place " + piecePos + ": ");
+                if ((gboard.numCows(player.playerID) == 3 || Board.neighbours[piecePos].Contains(placePos)) && gboard.board[placePos].getState == Player.None)
+                {
+                    return placePos;
+                }
+                gboard.Display("");
+                Console.WriteLine("Please select a valid position");
+            }
+        }
+
+        public static string PlaceInput(IPlayer player, Board gboard)
+        {
+            string placePos;
+            while (true)
+            {
+                placePos = player.getMove("Select position to place your piece: ");
+                if (gboard.board[placePos].getState == Player.None)
+                {
+                    return placePos;
+                }
+                Console.WriteLine("Please select a valid position");
+            }
+        }
+
+        public static string ShootInput(IPlayer player, Board gboard)
+        {
+            string shootPos;
+            while (true)
+            {
+                shootPos = player.getMove("Select piece to shoot: ");
+                if (gboard.board[shootPos].getState == player.getOpponent() && (!gboard.isInMill(shootPos) || gboard.allInMill(player.getOpponent())))
+                {
+                    return shootPos;
+                }
+                Console.WriteLine("Please select a valid piece to shoot");
+            }
+        }
+    }
+
     internal class Program
     {
         private static void Main(string[] args)
         {
             IGameManager manager = new MorabarabaManager();
             manager.placingPhase();
-            manager.movingPhase();
+            Console.WriteLine(manager.movingPhase());
             Console.ReadLine();
         }
     }
