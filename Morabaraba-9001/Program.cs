@@ -56,7 +56,7 @@ namespace Morabaraba_9001
 
     public interface IGameManager
     {
-        void placingPhase();
+        int placingPhase();
 
         string movingPhase();
     }
@@ -290,7 +290,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         public IPlayer xPlayer, oPlayer;
         public IBoard gameBoard = new Board();
         public IPlayer currPlayer;
-        public void placingPhase()
+        public int placingPhase()
         {
             while (currPlayer.stones > 0)
             {
@@ -302,6 +302,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
                 else
                     currPlayer = xPlayer;
             }
+            return 0;
         }
 
         public string movingPhase()
