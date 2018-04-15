@@ -242,9 +242,7 @@ namespace Morabaraba_9001.Test
             //b.Shoot(o);
             //x.getMove(Arg.Any<string>()).Returns("A7", "D3");
             //b.Place(x);
-
-
-
+            Assert.That(1 == 2);//force fail to remind us to fix
         }
         [Test]
         public void CannotShootOwnCows()//baka!
@@ -262,6 +260,7 @@ namespace Morabaraba_9001.Test
             //b.Place(x);
 
             //Assert.That(b.board["B2"].getState == Player.None);// && b.board["G1"].getState == Player.None
+            Assert.That(1 == 2);//force fail to remind us to fix
         }
         [Test]
         public void CannotShootEmptySpace()
