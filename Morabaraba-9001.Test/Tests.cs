@@ -97,38 +97,39 @@ namespace Morabaraba_9001.Test
         {
 
             Board b = new Board();
+            b.board["A4"] = new Cell(Player.X);
             IPlayer x = Substitute.For<IPlayer>();
-            x.getMove(Arg.Any<string>()).Returns("A4", "A4", "A1");
-            b.Place(x);
-            int num = b.numCows(x.playerID);
+            x.playerID.Returns(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A4", "A1");
+            int old = b.numCows(x.playerID);
             b.Move(x);
-            Assert.That(num == b.numCows(x.playerID));
+            Assert.That(b.numCows(x.playerID) == old);
         }
         //flying
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
-            //We check that cows are made into flying cows by checking that once the player reaches 3 cows left, the remaining cows behave as flying cows
-            //and use this to simulate a x cow flying to create a mill that ends the game
-            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            IBoard b = manager.gameBoard;
+            Board b = new Board();
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.X);
+            b.board["A7"] = new Cell(Player.X);
+            b.board["B2"] = new Cell(Player.X);
             IPlayer x = Substitute.For<IPlayer>();
-            IPlayer o = Substitute.For<IPlayer>();
-            x.setID(Player.X);
-            o.setID(Player.O);
+            x.playerID.Returns(Player.X);
 
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
-            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
-            b.Place(x);
-            b.Place(x);
-            b.Place(x);
-            b.Place(o);
-            b.Place(o);
-            b.Place(o);
-            
-            
-            Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));         
+            Assert.That(b.numCows(x.playerID) > 3);
+            x.getMove(Arg.Any<string>()).Returns("A1", "G1", "D1");
+            b.Move(x);
+            x.Received(3).getMove(Arg.Any<string>());
 
+            b.board["D1"] = new Cell(Player.None);
+            Assert.That(b.numCows(x.playerID) == 3);
+
+            x.getMove(Arg.Any<string>()).Returns("A4", "G1", "A1");
+            b.Move(x);
+            x.Received(5).getMove(Arg.Any<string>());
+            Assert.That(b.board["G1"].getState == x.playerID);
+            Assert.That(b.board["A1"].getState == Player.None);
         }
         //general
         [Test]
