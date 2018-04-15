@@ -176,70 +176,19 @@ namespace Morabaraba_9001
 
         public void Place(IPlayer player)
         {
-            string placePos;
-            while (true)
-            {
-                placePos = player.getMove("Select position to place your piece: ");
-                if (board[placePos].getState == Player.None)
-                {
-                    break;
-                }
-                Console.WriteLine("Please select a valid position");
-            }
-            board[placePos].changeState(player.playerID);
-            player.reduceStones();
+            
             if (isInMill(placePos))
                 Shoot(player);
         }
 
         public void Move(IPlayer player)
         {
-            string piecePos, placePos;
-            while (true)
-            {
-                piecePos = player.getMove("Select piece to move: ");
-                if (board[piecePos].getState == player.playerID)
-                {
-                    if (player.isFlying() || isMovable(piecePos))
-                        break;
-                }
-                Display("");
-                Console.WriteLine("Please select a valid piece");
-            }
-
-            while (true)
-            {
-                placePos = player.getMove("Select position to place " + piecePos + ": ");
-                if ((player.isFlying() || neighbours[piecePos].Contains(placePos)) && board[placePos].getState == Player.None)
-                {
-                    break;
-                }
-                Display("");
-                Console.WriteLine("Please select a valid position");
-            }
-
-            board[placePos].changeState(board[piecePos].getState);
-            board[piecePos].changeState(Player.None);
-            if (isInMill(placePos))
-            {
-                Display("");
-                Shoot(player);
-            }
+          
         }
 
         public void Shoot(IPlayer player)
         {
-            string shootPos;
-            while (true)
-            {
-                shootPos = player.getMove("Select piece to shoot: ");
-                if (board[shootPos].getState == player.getOpponent() && (!isInMill(shootPos) || allInMill(player.getOpponent())))
-                {
-                    board[shootPos].changeState(Player.None);
-                    return;
-                }
-                Console.WriteLine("Please select a valid piece to shoot");
-            }
+            
            
         }
 
@@ -443,6 +392,71 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
                 Console.WriteLine("Please choose a valid position. you'll get snuggles ^w^ :3");
             }
             return input;
+        }
+    }
+
+
+    public class InputHandler
+    {
+        public static string PickUpInput(IPlayer player, Board gboard)
+        {
+            string piecePos;
+            while (true)
+            {
+                piecePos = player.getMove("Select piece to move: ");
+                if (gboard.board[piecePos].getState == player.playerID)
+                {
+                    if (player.isFlying() || gboard.isMovable(piecePos))
+                        return piecePos;
+                }
+                gboard.Display("");
+                Console.WriteLine("Please select a valid piece");
+            }
+
+            
+        }
+
+        public static string PutDownInput(string piecePos, IPlayer player, Board gboard)
+        {
+            string placePos;
+            while (true)
+            {
+                placePos = player.getMove("Select position to place " + piecePos + ": ");
+                if ((player.isFlying() || Board.neighbours[piecePos].Contains(placePos)) && gboard.board[placePos].getState == Player.None)
+                {
+                    return placePos;
+                }
+                gboard.Display("");
+                Console.WriteLine("Please select a valid position");
+            }
+        }
+
+        public string placeInput(IPlayer player, Board gboard)
+        {
+            string placePos;
+            while (true)
+            {
+                placePos = player.getMove("Select position to place your piece: ");
+                if (gboard.board[placePos].getState == Player.None)
+                {
+                    return placePos;
+                }
+                Console.WriteLine("Please select a valid position");
+            }
+        }
+
+        public string shootInput(IPlayer player, Board gboard)
+        {
+            string shootPos;
+            while (true)
+            {
+                shootPos = player.getMove("Select piece to shoot: ");
+                if (gboard.board[shootPos].getState == player.getOpponent() && (!gboard.isInMill(shootPos) || gboard.allInMill(player.getOpponent())))
+                {
+                    return shootPos;
+                }
+                Console.WriteLine("Please select a valid piece to shoot");
+            }
         }
     }
 
