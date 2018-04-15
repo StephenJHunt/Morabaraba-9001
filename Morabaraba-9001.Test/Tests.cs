@@ -77,18 +77,26 @@ namespace Morabaraba_9001.Test
         public void ANormalCowCanOnlyMoveToAConnectedSpace()
         {
             Board b = new Board();
-            //Assert.That(b.getNeighbours(cowPos).Contains(moveCell));
-            //Assert.That(1 == 2 );//y
+            IPlayer x = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A4", "A4", "G7", "A7");
+            b.Place(x);
+            int num = b.numCows(x.playerID);
+            b.Move(x);
+            Assert.That(b.board["A4"].getState == Player.None && b.board["G7"].getState == Player.None && b.board["A7"].getState == Player.X);
         }
         [Test]
         public void CowCanOnlyMoveToEmptySpace()
         {
-            //IPlayer x = Substitute.For<IPlayer>();
-            //x.getMove(Arg.Any<string>()).Returns("A4");
             //Board b = new Board();
-            //ICell cell = b.board["A4"];
-            //Assert.That(cell.getState == Player.None);
-            //Assert.That(1 == 2 );
+            //IPlayer x = Substitute.For<IPlayer>();
+            //x.setID(Player.X);
+            //x.getMove(Arg.Any<string>()).Returns("A1","A4", "A4", "A1", "A7");
+            //b.Place(x);
+            //b.Place(x);
+            //int num = b.numCows(x.playerID);
+            //b.Move(x);
+            //Assert.That(b.board["A4"].getState == Player.None && b.board["A1"].getState == Player.X && b.board["A7"].getState == Player.X);
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
