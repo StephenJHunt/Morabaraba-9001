@@ -70,25 +70,27 @@ namespace Morabaraba_9001.Test
         {
             Board b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
-            x.setID(Player.X);
-            x.getMove(Arg.Any<string>()).Returns("A4", "A4", "G7", "A7");
-            b.Place(x);
-            int num = b.numCows(x.playerID);
+            x.isFlying().Returns(false);
+            x.playerID.Returns(Player.X);
+            b.board["A1"] = new Cell(x.playerID);
+            x.getMove(Arg.Any<string>()).Returns( "A1", "G7", "A4");
             b.Move(x);
-            Assert.That(b.board["A4"].getState == Player.None && b.board["G7"].getState == Player.None && b.board["A7"].getState == Player.X);
+            x.Received(3).getMove(Arg.Any<string>());
         }
         [Test]
         public void CowCanOnlyMoveToEmptySpace()
         {
             Board b = new Board();
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.X);
+            b.board["D1"] = new Cell(Player.O);
+            b.board["B2"] = new Cell(Player.None);
             IPlayer x = Substitute.For<IPlayer>();
-            x.setID(Player.X);
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A4", "A1", "A7");
-            b.Place(x);
-            b.Place(x);
-            int num = b.numCows(x.playerID);
+            x.isFlying().Returns(false);
+            x.playerID.Returns(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4", "D1", "B2");
             b.Move(x);
-            Assert.That(b.board["A4"].getState == Player.None && b.board["A1"].getState == Player.X && b.board["A7"].getState == Player.X);
+            x.Received(5).getMove(Arg.Any<string>());
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
