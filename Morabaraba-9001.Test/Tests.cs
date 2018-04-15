@@ -181,11 +181,22 @@ namespace Morabaraba_9001.Test
             Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("B4"));
         }
         [Test]
-        public void ShootingOnlyPossibleOnMillCreation()
+        public void ShootingOnlyPossibleOnMillCreation()//confusion
         {
-            //Board b = Substitute.For<Board>();
-            //somehow check that shoot is called only when move makes a mill
-            //Assert.That(1 == 2 );
+            //check shooting is only possible by showing that it only happens once even with many pieces being placed, during which only one mill is formed
+            Board b = Substitute.For<Board>();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            IPlayer o = Substitute.For<IPlayer>();
+            o.setID(Player.O);
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4");
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1");
+            b.Place(o);
+            b.Place(o);
+            b.Place(x);
+            b.Place(x);
+            b.Place(x); 
+            Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None && b.board["G4"].getState == o.playerID);
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
