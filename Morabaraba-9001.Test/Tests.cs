@@ -304,12 +304,46 @@ namespace Morabaraba_9001.Test
         [Test]
         public void WinIfOpponentCannotMove()
         {
-            //Assert.That(1 == 2 );
+            //MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            //IBoard b = manager.gameBoard;
+            //IPlayer x = Substitute.For<IPlayer>();
+            //IPlayer o = Substitute.For<IPlayer>();
+            //x.setID(Player.X);
+            //o.setID(Player.O);
+
+            //x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
+            //o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
+            //b.Place(x);
+            //b.Place(x);
+            //b.Place(x);
+            //b.Place(o);
+            //b.Place(o);
+            //b.Place(o);
+
+
+            //Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));
         }
         [Test]
         public void WinIfOpponentHas2OrLessCowsLeftAfterPlacement()
         {
-            //Assert.That(1 == 2 );
+            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
+            IBoard b = manager.gameBoard;
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            o.setID(Player.O);
+
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+
+            Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));
         }
     }
 }
