@@ -224,11 +224,12 @@ namespace Morabaraba_9001.Test
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
             Board b = new Board();
-            //IPlayer o = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
             //o.playerID = Player.O;
-            //IPlayer x = Substitute.For<IPlayer>();
-            //x.playerID = Player.X;
-            //Assert.That(x.getOpponent() == Player.X);
+            o.playerID.Returns(Player.O);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            Assert.That(x.getOpponent() == Player.X);
 
             //o.getMove(Arg.Any<string>()).Returns("G1", "G4");
             //b.Place(o);
