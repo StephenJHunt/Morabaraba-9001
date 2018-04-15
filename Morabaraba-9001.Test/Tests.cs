@@ -114,6 +114,8 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
+            //We check that cows are made into flying cows by checking that once the player reaches 3 cows left, the remaining cows behave as flying cows
+            //and use this to simulate a x cow flying to create a mill that ends the game
             MorabarabaManager manager = Substitute.For<MorabarabaManager>();
             IBoard b = manager.gameBoard;
             IPlayer x = Substitute.For<IPlayer>();
