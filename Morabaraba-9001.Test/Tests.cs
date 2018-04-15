@@ -151,13 +151,22 @@ namespace Morabaraba_9001.Test
             b.Place(x);
             b.Place(x);
             b.Place(x);
-            Assert.That(b.isInMill("A1"));// && b.isInMill("A4") && b.isInMill("A7")
+            Assert.That(b.isInMill("A1") && b.isInMill("A4") && b.isInMill("A7"));
         }
         [Test]
         public void MillNotFormedWhenNotSamePlayer()
         {
-            //Assert.That isInMill only checks one player
-            //Assert.That(1 == 2 );//y
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            o.setID(Player.O);
+            o.getMove(Arg.Any<string>()).Returns("A7");
+            x.getMove(Arg.Any<string>()).Returns("A1", "A4");
+            b.Place(o);
+            b.Place(x);
+            b.Place(x);
+            Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("A7"));
         }
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()
