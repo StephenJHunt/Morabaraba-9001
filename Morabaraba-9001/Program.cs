@@ -38,7 +38,7 @@ namespace Morabaraba_9001
 
     public interface IPlayer
     {
-        Player playerID { get; }
+        Player playerID { get; set; }
 
         string getMove(string prompt);
 
@@ -412,7 +412,9 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             numStones--;
         }
 
-        public Player playerID => gameplayer;
+        //public Player playerID => gameplayer;
+
+        Player IPlayer.playerID { get => gameplayer; set => gameplayer = value; }
 
         public Player getOpponent()
         {
