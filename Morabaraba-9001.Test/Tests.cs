@@ -154,12 +154,9 @@ namespace Morabaraba_9001.Test
         public void MillNotFormedWhenConnectionsDoNotFormLine()
         {
             Board b = new Board();
-            IPlayer x = Substitute.For<IPlayer>();
-            x.setID(Player.X);
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4");
-            b.Place(x);
-            b.Place(x);
-            b.Place(x);
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.X);
+            b.board["B4"] = new Cell(Player.X);
             Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("B4"));
         }
         [Test]
