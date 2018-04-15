@@ -201,31 +201,28 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
         {
-            //Board b = Substitute.For<Board>();
-            //Player p = new Player();
-            //GamePlayer player = new GamePlayer(p);
-            //foreach (ICell cow in b.Cows(player))
-            //{
-            //    if (!cow.isInMill)
-            //    {
-            //        b.DidNotRecieveWithAnyArgs().Shoot();
-            //    }
-            //}
-            //Assert.That(1 == 2 );//y
+            Board b = Substitute.For<Board>();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.setID(Player.X);
+            IPlayer o = Substitute.For<IPlayer>();
+            o.setID(Player.O);
+            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "G7", "A1", "F2");
+            x.getMove(Arg.Any<string>()).Returns("A1", "A1" ,"A4", "A7", "G1", "F2");
+            b.Place(x);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+            b.Place(x);
+            b.Place(x);
+            b.Place(x);
+
+            Assert.That(b.board["F2"].getState == Player.None && b.board["G1"].getState == o.playerID);
         }
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-            //Board b = new Board();
-            //GamePlayer player = new GamePlayer();
-            //foreach (ICell cow in b.Cows(player))
-            //{
-            //    if (!cow.isInMill)
-            //    {
-            //        b.ReceivedWithAnyArgs.Shoot();
-            //    }
-            //}
-            //Assert.That(1 == 2 );//y
+            
         }
         [Test]
         public void CannotShootOwnCows()//baka!
