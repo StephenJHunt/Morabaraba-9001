@@ -27,82 +27,96 @@ namespace Morabaraba_9001.Test
         [Test]
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
-            MorabarabaManager mbman = new MorabarabaManager();
-            //Assert(mbman.startingPlayer == Player.X);
+            //MorabarabaManager mbman = Substitute.For<MorabarabaManager>();
+            //Assert(mbman.placingPhase.currPlayer == Player.X);
+            Assert.That(1 == 2 );
         }
         [Test]
-        public void CowsCanOnlyBePlayedOnEmptySpaces(string input)
+        public void CowsCanOnlyBePlayedOnEmptySpaces()
         {
-            
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void AMaximumOf12PlacementsPerPlayerAreAllowed()
         {
-            //Assert.That(Board.Xpieces == 12);
-            //Assert.That(Board.Ypieces == 12);
+            GamePlayer Player1 = new GamePlayer(Player.X);
+            Assert.That(Player1.stones == 12);
+            GamePlayer Player2 = new GamePlayer(Player.O);
+            Assert.That(Player2.stones == 12);
         }
         [Test]
-        public void CowsCannotBeMovedDuringPlacement()
+        public void CowsCannotBeMovedDuringPlacement()//this one keeps breaking tests. Leave it to last
         {
-            IGameManager gm = Substitute.For<IGameManager>();
-            Board b = new Board();
-            gm.placingPhase();
-            Player pl = Player.None;
-            GamePlayer player = new GamePlayer(pl);
-            b.DidNotReceiveWithAnyArgs().Move(player);
+            //var counter = 0;
+            //IGameManager gm = Substitute.For<IGameManager>();
+            //Board b = Substitute.For<Board>();
+            //gm.When(x => gm.placingPhase()).Do(x => counter++);
+            //GamePlayer player = new GamePlayer(Player.None);
+            //b.DidNotReceiveWithAnyArgs().Move(player);
+            Assert.That(1 == 2);
         }
         //moving
         [Test]
-        public void ANormalCowCanOnlyMoveToAConnectedSpace(string cowPos, ICell moveCell)
+        public void ANormalCowCanOnlyMoveToAConnectedSpace()
         {
             Board b = new Board();
-            Assert.That(b.getNeighbours(cowPos).Contains(moveCell));
+            //Assert.That(b.getNeighbours(cowPos).Contains(moveCell));
+            Assert.That(1 == 2 );//y
         }
         [Test]
-        public void CowCanOnlyMoveToEmptySpace(string moveCell)
+        public void CowCanOnlyMoveToEmptySpace()
         {
+            IPlayer x = Substitute.For<IPlayer>();
+            x.getMove(Arg.Any<string>()).Returns("A4");
             Board b = new Board();
-            ICell cell = b.board[moveCell];
+            ICell cell = b.board["A4"];
             Assert.That(cell.getState == Player.None);
+            //Assert.That(1 == 2);
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
         {
-            Board b = new Board();
-            Player p = Player.O;
-            GamePlayer pl = new GamePlayer(p);
-            int beforeMovePieces = b.numCows(p);
-            b.Move(pl);
-            int afterMovePieces = b.numCows(p);
-            Assert.That(beforeMovePieces == afterMovePieces);
+            //Board b = new Board();
+            //Player p = Player.O;
+            //GamePlayer pl = new GamePlayer(p);
+            //int beforeMovePieces = b.numCows(p);
+            //b.Move(pl);
+            //int afterMovePieces = b.numCows(p);
+            //Assert.That(beforeMovePieces == afterMovePieces);
+            Assert.That(1 == 2);
         }
         //flying
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
             //check isflying when plater reaches 3 cows
+            Assert.That(1 == 2 );//y
         }
         //general
         [Test]
         public void MillIsFormedBy3SameCowsInALine()
         {
             //Assert.That isinMill returns true if given a cow that forms a mill
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void MillNotFormedWhenNotSamePlayer()
         {
             //Assert.That isInMill only checks one player
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()
         {
             //Assert.That mill list exists and is not null
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void ShootingOnlyPossibleOnMillCreation()
         {
-            Board b = Substitute.For<Board>();
+            //Board b = Substitute.For<Board>();
             //somehow check that shoot is called only when move makes a mill
+            Assert.That(1 == 2 );
         }
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
@@ -117,6 +131,7 @@ namespace Morabaraba_9001.Test
             //        b.DidNotRecieveWithAnyArgs().Shoot();
             //    }
             //}
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
@@ -130,31 +145,32 @@ namespace Morabaraba_9001.Test
             //        b.ReceivedWithAnyArgs.Shoot();
             //    }
             //}
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void CannotShootOwnCows()//baka!
         {
-
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void CannotShootEmptySpace()
         {
-
+            Assert.That(1 == 2 );//y
         }
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
-
+            Assert.That(1 == 2 );
         }
         [Test]
         public void WinIfOpponentCannotMove()
         {
-
+            Assert.That(1 == 2 );
         }
         [Test]
         public void WinIfOpponentHas2OrLessCowsLeftAfterPlacement()
         {
-
+            Assert.That(1 == 2 );
         }
     }
 }
