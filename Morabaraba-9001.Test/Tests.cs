@@ -223,32 +223,32 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-            Board b = Substitute.For<Board>();
-            IPlayer x = Substitute.For<IPlayer>();
-            x.setID(Player.X);
-            IPlayer o = Substitute.For<IPlayer>();
-            o.setID(Player.O);
-            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "G7", "A1");
-            x.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4", "A7", "G1");
-            b.Place(x);
-            b.Place(o);
-            b.Place(o);
-            b.Place(o);
-            b.Place(x);
-            b.Place(x);
-            b.Place(x);
+            Board b = new Board();
+            //IPlayer o = Substitute.For<IPlayer>();
+            //o.playerID = Player.O;
+            //IPlayer x = Substitute.For<IPlayer>();
+            //x.playerID = Player.X;
+            //Assert.That(x.getOpponent() == Player.X);
 
-            Assert.That(b.board["G1"].getState == Player.None);
+            //o.getMove(Arg.Any<string>()).Returns("G1", "G4");
+            //b.Place(o);
+            //b.Place(o);
+            //x.getMove(Arg.Any<string>()).Returns("A1");
+            //b.Place(x);
+            //o.getMove(Arg.Any<string>()).Returns("G7", "A1");
+            //b.Place(o);
+
+            //o.getMove(Arg.Any<string>()).Returns("G1");
+            //b.Shoot(o);
+            //x.getMove(Arg.Any<string>()).Returns("A7", "D3");
+            //b.Place(x);
+
+
+
         }
         [Test]
         public void CannotShootOwnCows()//baka!
         {
-            IPlayer o = Substitute.For<IPlayer>();
-            o.playerID = Player.O;
-            Board b = Substitute.For<Board>();
-            o.getMove(Arg.Any<string>()).Returns("A1");
-            b.Place(o);
-            Assert.That(b.board["A1"].getState == Player.O);
             //GamePlayer x = new GamePlayer(Player.X);
             //x.setID(Player.X);
             //GamePlayer o = new GamePlayer(Player.O);
@@ -266,7 +266,21 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CannotShootEmptySpace()
         {
-            //Assert.That(1 == 2 );//y
+            Board b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID = Player.X;
+            IPlayer o = Substitute.For<IPlayer>();
+            o.playerID = Player.O;
+
+            x.getMove(Arg.Any<string>()).Returns("G1");
+            b.Place(x);
+
+            o.getMove(Arg.Any<string>()).Returns("A1","A4","A7","B2","G1");
+            b.Place(o);
+            b.Place(o);
+            b.Place(o);
+
+            Assert.That(b.board["B2"].getState == Player.None && b.board["G1"].getState == Player.None);
         }
         [Test]
         public void ShotCowsRemovedFromBoard()
