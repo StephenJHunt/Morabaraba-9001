@@ -176,20 +176,30 @@ namespace Morabaraba_9001
 
         public void Place(IPlayer player)
         {
-            
+            string placePos = InputHandler.PlaceInput(player, this);
+            board[placePos].changeState(player.playerID);
+            player.reduceStones();
             if (isInMill(placePos))
                 Shoot(player);
         }
 
         public void Move(IPlayer player)
         {
-          
+            string piecePos = InputHandler.PickUpInput(player, this);
+            string placePos = InputHandler.PutDownInput(piecePos, player, this);
+            board[piecePos].changeState(Player.None);
+            board[placePos].changeState(player.playerID);
+            if (isInMill(placePos))
+            {
+                Display("");
+                Shoot(player);
+            }
         }
 
         public void Shoot(IPlayer player)
         {
-            
-           
+            string shootPos = InputHandler.ShootInput(player, this);
+            board[shootPos].changeState(Player.None);
         }
 
         public bool isMovable(string pos)
@@ -431,7 +441,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public string placeInput(IPlayer player, Board gboard)
+        public static string PlaceInput(IPlayer player, Board gboard)
         {
             string placePos;
             while (true)
@@ -445,7 +455,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public string shootInput(IPlayer player, Board gboard)
+        public static string ShootInput(IPlayer player, Board gboard)
         {
             string shootPos;
             while (true)
