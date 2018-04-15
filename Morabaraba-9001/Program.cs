@@ -62,7 +62,7 @@ namespace Morabaraba_9001
     {
         void placingPhase();
 
-        void movingPhase();
+        string movingPhase();
     }
 
     public class invalidMoveException : ApplicationException { }
@@ -349,7 +349,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public void movingPhase()
+        public string movingPhase()
         {
             currPlayer = xPlayer;
             while (true)
@@ -361,13 +361,11 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
                 if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
                 {
-                    Console.WriteLine("O wins!");
-                    break;
+                    return "O wins!";
                 }
                 if (gameBoard.numCows(Player.O) < 3 || !gameBoard.canPlay(oPlayer))
                 {
-                    Console.WriteLine("X wins!");
-                    break;
+                    return "X wins!";
                 }
 
                 gameBoard.Move(currPlayer);
@@ -448,7 +446,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             IGameManager manager = new MorabarabaManager();
             manager.placingPhase();
-            manager.movingPhase();
+            Console.WriteLine(manager.movingPhase());
             Console.ReadLine();
         }
     }
