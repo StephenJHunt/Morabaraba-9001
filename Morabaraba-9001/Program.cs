@@ -41,7 +41,7 @@ namespace Morabaraba_9001
 
     public interface ICell
     {
-        Player getState { get; }
+        Player getState();
 
         void changeState(Player changedState);
     }
@@ -81,7 +81,7 @@ namespace Morabaraba_9001
     public class Cell : ICell
     {
         private Player state;
-        public Player getState => state;
+        public Player getState() { return state; }
 
         public Cell(Player startState)
         {
@@ -167,7 +167,7 @@ namespace Morabaraba_9001
         {
             IEnumerable<ICell> query =
                 from cell in board.Values.ToList()
-                where cell.getState == player
+                where cell.getState() == player
                 select cell;
             return query.Count();
         }
@@ -232,7 +232,7 @@ namespace Morabaraba_9001
         {
             List<ICell> emptyNeighbours =
                 (from cell in getNeighbours(pos)
-                 where cell.getState == Player.None
+                 where cell.getState() == Player.None
                  select cell).ToList();
             return emptyNeighbours.Count > 0;
         }
@@ -243,7 +243,7 @@ namespace Morabaraba_9001
                 return true;
             IEnumerable<string> query =
                 from pos in board.Keys
-                where board[pos].getState == player.playerID
+                where board[pos].getState() == player.playerID
                 where isMovable(pos)
                 select pos;
             return query.Any();
@@ -253,7 +253,7 @@ namespace Morabaraba_9001
         {
             foreach (string pos in board.Keys)
             {
-                if (board[pos].getState == player && !isInMill(pos))
+                if (board[pos].getState() == player && !isInMill(pos))
                     return false;
             }
             return true;
@@ -264,8 +264,8 @@ namespace Morabaraba_9001
             List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
             foreach (ICell[] mill in relevantmills.Select(mill => mill.Select(getCell).ToArray()).ToList())
             {
-                if ((mill[0].getState == Player.X && mill[1].getState == Player.X && mill[2].getState == Player.X) ||
-                    (mill[0].getState == Player.O && mill[1].getState == Player.O && mill[2].getState == Player.O))
+                if ((mill[0].getState() == Player.X && mill[1].getState() == Player.X && mill[2].getState() == Player.X) ||
+                    (mill[0].getState() == Player.O && mill[1].getState() == Player.O && mill[2].getState() == Player.O))
                 {
                     return true;
                 }
@@ -285,7 +285,7 @@ namespace Morabaraba_9001
         public void Display(string extraDisplay)
         {
             Console.Clear();
-            string[] cells = board.Values.Select(cell => playerToString(cell.getState)).ToArray();
+            string[] cells = board.Values.Select(cell => playerToString(cell.getState())).ToArray();
             string dis =
                 $@"
     1   2  3   4   5  6   7
@@ -478,7 +478,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
         public bool isValidPickUp(string pos, IPlayer player, IBoard board)
         {
-            return board.board[pos].getState == player.playerID 
+            return board.board[pos].getState() == player.playerID 
                     && (board.numCows(player.playerID) == 3 
                         || board.isMovable(pos));
         }
@@ -486,7 +486,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         public bool isValidPlacement(string pos, IPlayer player, IBoard board)
         {
 
-            return board.board[pos].getState == Player.None
+            return board.board[pos].getState() == Player.None
                 && player.stones > 0;
         }
 
@@ -494,81 +494,19 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             return (board.numCows(player.playerID) == 3
                     || Board.neighbours[piecePos].Contains(placePos))
-                    && board.board[placePos].getState == Player.None;
+                    && board.board[placePos].getState() == Player.None;
         }
 
         public bool isValidShot(string pos, IPlayer player, IBoard board)
         {
-            return board.board[pos].getState == player.getOpponent()
+            return board.board[pos].getState() == player.getOpponent()
                    && (!board.isInMill(pos)
                        || board.allInMill(player.getOpponent()));
         }
 
     }
 
-    public class InputHandler
-    {
-        public static string PickUpInput(IPlayer player, IBoard gboard)
-        {
-            string piecePos;
-            while (true)
-            {
-                piecePos = player.getMove("Select piece to move: ");
-                if (gboard.board[piecePos].getState == player.playerID)
-                {
-                    if (gboard.numCows(player.playerID) == 3 || gboard.isMovable(piecePos))
-                        return piecePos;
-                }
-                gboard.Display("");
-                Console.WriteLine("Please select a valid piece");
-            }
 
-            
-        }
-
-        public static string PutDownInput(string piecePos, IPlayer player, IBoard gboard)
-        {
-            string placePos;
-            while (true)
-            {
-                placePos = player.getMove("Select position to place " + piecePos + ": ");
-                if ((gboard.numCows(player.playerID) == 3 || Board.neighbours[piecePos].Contains(placePos)) && gboard.board[placePos].getState == Player.None)
-                {
-                    return placePos;
-                }
-                gboard.Display("");
-                Console.WriteLine("Please select a valid position");
-            }
-        }
-
-        public static string PlaceInput(IPlayer player, IBoard gboard)
-        {
-            string placePos;
-            while (true)
-            {
-                placePos = player.getMove("Select position to place your piece: ");
-                if (gboard.board[placePos].getState == Player.None)
-                {
-                    return placePos;
-                }
-                Console.WriteLine("Please select a valid position");
-            }
-        }
-
-        public static string ShootInput(IPlayer player, IBoard gboard)
-        {
-            string shootPos;
-            while (true)
-            {
-                shootPos = player.getMove("Select piece to shoot: ");
-                if (gboard.board[shootPos].getState == player.getOpponent() && (!gboard.isInMill(shootPos) || gboard.allInMill(player.getOpponent())))
-                {
-                    return shootPos;
-                }
-                Console.WriteLine("Please select a valid piece to shoot");
-            }
-        }
-    }
 
     internal class Program
     {
