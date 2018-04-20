@@ -11,7 +11,7 @@ namespace Morabaraba_9001
         bool isValidPutDown(string piecePos, string placePos, IPlayer player, IBoard board);
         bool isValidShot(string pos, IPlayer player, IBoard board);
         bool inPlacing(IPlayer player1, IPlayer player2);
-        bool inMoving(IPlayer player1, IPlayer player2, IBoard board);
+        GameResult getGameState(IPlayer player1, IPlayer player2, IBoard board);
     }
     public interface IBoard
     {
@@ -68,11 +68,12 @@ namespace Morabaraba_9001
     public enum ShootResult {Invalid, Done}
     public enum MoveAction {Move, Shoot}
     public enum MoveResult {InvalidPickUp, InvalidPutDown, MillMade, Done}
+    public enum GameResult {NotWon, Player1, Player2}
     public interface IGameManager
     {
         void placingPhase();
 
-        string movingPhase();
+        GameResult movingPhase();
     }
 
     public class invalidMoveException : ApplicationException { }
@@ -356,29 +357,45 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public string movingPhase()
+        public GameResult movingPhase()
         {
+            GameResult gameState = referee.getGameState(xPlayer, oPlayer, gameBoard);
+            MoveAction act = MoveAction.Move;
             currPlayer = xPlayer;
-            while (true)
+            while (gameState == GameResult.NotWon)
             {
                 gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
 
-                if (gameBoard.numCows(Player.X) < 3 || !gameBoard.canPlay(xPlayer))
+                if (act == MoveAction.Move)
                 {
-                    return "O wins!";
+                    switch (gameBoard.Move(currPlayer, referee))
+                    {
+                        case MoveResult.InvalidPickUp: break;
+                        case MoveResult.InvalidPutDown: break;
+                        case MoveResult.MillMade: act = MoveAction.Shoot;  break;
+                        case MoveResult.Done:
+                            if (currPlayer == xPlayer)
+                                currPlayer = oPlayer;
+                            else
+                                currPlayer = xPlayer;
+                            break;
+                    }
                 }
-                if (gameBoard.numCows(Player.O) < 3 || !gameBoard.canPlay(oPlayer))
-                {
-                    return "X wins!";
-                }
-
-                gameBoard.Move(currPlayer);
-
-                if (currPlayer == xPlayer)
-                    currPlayer = oPlayer;
                 else
-                    currPlayer = xPlayer;
+                {
+                    if (gameBoard.Shoot(currPlayer, referee) == ShootResult.Done)
+                    {
+                        act = MoveAction.Move;
+                        if (currPlayer == xPlayer)
+                            currPlayer = oPlayer;
+                        else
+                            currPlayer = xPlayer;
+                    }
+                }
+                gameState = referee.getGameState(xPlayer, oPlayer, gameBoard);
             }
+            gameBoard.Display($@"X cows: {gameBoard.numCows(Player.X)} O cows: {gameBoard.numCows(Player.O)}");
+            return gameState;
         }
     }
 
@@ -444,15 +461,19 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MReferee : IRef
     {
-        public bool inMoving(IPlayer player1, IPlayer player2, IBoard board)
-        {
-            return board.numCows(player1.playerID) >= 3
-                   && board.numCows(player2.playerID) >= 3;
-        }
 
         public bool inPlacing(IPlayer player1, IPlayer player2)
         {
             return player1.stones > 0 || player2.stones > 0;
+        }
+
+        public GameResult getGameState(IPlayer player1, IPlayer player2, IBoard board)
+        {
+            if (board.numCows(player1.playerID) < 3 || !board.canPlay(player1))
+                return GameResult.Player2;
+            if (board.numCows(player2.playerID) < 3 || !board.canPlay(player2))
+                return GameResult.Player1;
+            return GameResult.NotWon;
         }
 
         public bool isValidPickUp(string pos, IPlayer player, IBoard board)
@@ -482,6 +503,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
                    && (!board.isInMill(pos)
                        || board.allInMill(player.getOpponent()));
         }
+
     }
 
     public class InputHandler
@@ -554,7 +576,10 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             IGameManager manager = new MorabarabaManager(new Board(), new GamePlayer(Player.X), new GamePlayer(Player.O), new MReferee());
             manager.placingPhase();
-            Console.WriteLine(manager.movingPhase());
+            if (manager.movingPhase() == GameResult.Player1)
+                Console.WriteLine("X Won!!!");
+            else
+                Console.WriteLine("O Won!!!");
             Console.ReadLine();
         }
     }
