@@ -4,8 +4,16 @@ using System.Linq;
 
 namespace Morabaraba_9001
 {
+    public interface IRef
+    {
+        bool isValidPlacement(string pos, IBoard board);
+        bool isValidPickUp(string pos, IPlayer player, IBoard board);
+        bool isValidPutDown(string pos, IBoard board);
+        bool isValidShot(string pos, IPlayer player, IBoard board);
+    }
     public interface IBoard
     {
+        Dictionary<string, ICell> board {get; }
         int numCows(Player player);
 
         void Place(IPlayer player);
@@ -136,7 +144,9 @@ namespace Morabaraba_9001
             new string[] { "A7", "B6", "C5"}
         };
 
-        public Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+        private Dictionary<string, ICell> board = new Dictionary<string, ICell>();
+
+        Dictionary<string, ICell> IBoard.board => board;
 
         public Board()
         {
@@ -390,9 +400,36 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     }
 
 
+    public class MReferee : IRef
+    {
+        public bool isValidPickUp(string pos, IPlayer player, IBoard board)
+        {
+            if (board.board[pos].getState == player.playerID)
+            {
+                return board.numCows(player.playerID) == 3 || board.isMovable(pos);
+            }
+            return false;
+        }
+
+        public bool isValidPlacement(string pos, IBoard board)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool isValidPutDown(string pos, IBoard board)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool isValidShot(string pos, IPlayer player, IBoard board)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class InputHandler
     {
-        public static string PickUpInput(IPlayer player, Board gboard)
+        public static string PickUpInput(IPlayer player, IBoard gboard)
         {
             string piecePos;
             while (true)
@@ -410,7 +447,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             
         }
 
-        public static string PutDownInput(string piecePos, IPlayer player, Board gboard)
+        public static string PutDownInput(string piecePos, IPlayer player, IBoard gboard)
         {
             string placePos;
             while (true)
@@ -425,7 +462,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public static string PlaceInput(IPlayer player, Board gboard)
+        public static string PlaceInput(IPlayer player, IBoard gboard)
         {
             string placePos;
             while (true)
@@ -439,7 +476,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             }
         }
 
-        public static string ShootInput(IPlayer player, Board gboard)
+        public static string ShootInput(IPlayer player, IBoard gboard)
         {
             string shootPos;
             while (true)

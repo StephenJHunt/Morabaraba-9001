@@ -13,7 +13,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void AtStartBoardIsEmpty()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             bool isEmpty = true;
             foreach (ICell cell in b.board.Values)
             {
@@ -33,7 +33,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowsCanOnlyBePlayedOnEmptySpaces()
         {
-            Board b = Substitute.For<Board>();
+            IBoard b = Substitute.For<Board>();
             b.board["A1"] = new Cell(Player.O);
             b.board["A4"] = new Cell(Player.None);
             IPlayer x = Substitute.For<IPlayer>();
@@ -53,7 +53,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowsCannotBeMovedDuringPlacement()//leave for later
         {
-            Board b = Substitute.For<Board>();
+            IBoard b = Substitute.For<Board>();
             MorabarabaManager manager = Substitute.For<MorabarabaManager>();
             //placing phase (need some way to break the loop in it for a test)
             IPlayer pl = Substitute.For<IPlayer>();
@@ -79,7 +79,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ANormalCowCanOnlyMoveToAConnectedSpace()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
             b.board["A1"] = new Cell(x.playerID);
@@ -90,7 +90,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowCanOnlyMoveToEmptySpace()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             b.board["A1"] = new Cell(Player.X);
             b.board["A4"] = new Cell(Player.X);
             b.board["D1"] = new Cell(Player.O);
@@ -105,7 +105,7 @@ namespace Morabaraba_9001.Test
         public void MovingDoesNotChangeCowNumbers()
         {
 
-            Board b = new Board();
+            IBoard b = new Board();
             b.board["A4"] = new Cell(Player.X);
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -118,7 +118,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             b.board["A1"] = new Cell(Player.X);
             b.board["A4"] = new Cell(Player.X);
             b.board["A7"] = new Cell(Player.X);
@@ -144,7 +144,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MillIsFormedBy3SameCowsInALine()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             b.board["A1"] = new Cell(Player.X);
             Assert.That(b.isInMill("A1") == false);
             b.board["A4"] = new Cell(Player.X);
@@ -155,7 +155,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MillNotFormedWhenNotSamePlayer()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             b.board["A1"] = new Cell(Player.X);
             b.board["A4"] = new Cell(Player.O);
             b.board["A7"] = new Cell(Player.X);
@@ -164,7 +164,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             b.board["A1"] = new Cell(Player.X);
             b.board["A4"] = new Cell(Player.X);
             b.board["B4"] = new Cell(Player.X);
@@ -174,7 +174,7 @@ namespace Morabaraba_9001.Test
         public void ShootingOnlyPossibleOnMillCreation()//confusion
         {
             //check shooting is only possible by showing that it only happens once even with many pieces being placed, during which only one mill is formed
-            Board b = new Board();
+            IBoard b = new Board();
             
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -194,7 +194,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -222,7 +222,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -248,7 +248,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CannotShootOwnCows()//baka!
         {
-            Board b = new Board();
+            IBoard b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -269,7 +269,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CannotShootEmptySpace()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -288,7 +288,7 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
-            Board b = new Board();
+            IBoard b = new Board();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
