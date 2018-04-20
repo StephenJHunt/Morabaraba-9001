@@ -11,6 +11,7 @@ namespace Morabaraba_9001
         bool isValidPutDown(string piecePos, string placePos, IPlayer player, IBoard board);
         bool isValidShot(string pos, IPlayer player, IBoard board);
         bool inPlacing(IPlayer player1, IPlayer player2);
+        bool inMoving(IPlayer player1, IPlayer player2, IBoard board);
     }
     public interface IBoard
     {
@@ -438,6 +439,12 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MReferee : IRef
     {
+        public bool inMoving(IPlayer player1, IPlayer player2, IBoard board)
+        {
+            return board.numCows(player1.playerID) >= 3
+                   && board.numCows(player2.playerID) >= 3;
+        }
+
         public bool inPlacing(IPlayer player1, IPlayer player2)
         {
             return player1.stones > 0 || player2.stones > 0;
