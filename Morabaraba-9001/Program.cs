@@ -17,11 +17,11 @@ namespace Morabaraba_9001
         Dictionary<string, ICell> board {get; }
         int numCows(Player player);
 
-        void Place(IPlayer player);
+        int Place(IPlayer player, IRef referee);
 
         void Move(IPlayer player);
 
-        void Shoot(IPlayer player);
+        int Shoot(IPlayer player, IRef referee);
 
         List<ICell> getNeighbours(string pos);
 
@@ -62,6 +62,7 @@ namespace Morabaraba_9001
 
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
+    public enum PlaceActions {Place, Shoot}
 
     public interface IGameManager
     {
@@ -181,13 +182,19 @@ namespace Morabaraba_9001
             return neighbourList;
         }
 
-        public void Place(IPlayer player)
+        public int Place(IPlayer player, IRef referee)
         {
-            string placePos = InputHandler.PlaceInput(player, this);
+            string placePos = player.getMove("Select place position: ");
+            if (!referee.isValidPlacement(placePos, player, this))
+                return -1;
+
             board[placePos].changeState(player.playerID);
             player.reduceStones();
+
             if (isInMill(placePos))
-                Shoot(player);
+                return 1;
+            else
+                return 0;
         }
 
         public void Move(IPlayer player)
@@ -199,14 +206,17 @@ namespace Morabaraba_9001
             if (isInMill(placePos))
             {
                 Display("");
-                Shoot(player);
+                //Shoot(player);
             }
         }
 
-        public void Shoot(IPlayer player)
+        public int Shoot(IPlayer player, IRef referee)
         {
-            string shootPos = InputHandler.ShootInput(player, this);
+            string shootPos = player.getMove("Enter a position to shoot");
+            if (!referee.isValidShot(shootPos, player, this))
+                return -1;
             board[shootPos].changeState(Player.None);
+            return 0;
         }
 
         public bool isMovable(string pos)
@@ -305,15 +315,35 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         public IRef referee;
         public void placingPhase()
         {
-            while (currPlayer.stones > 0)
+            PlaceActions act = PlaceActions.Place;
+            while (referee.inPlacing(xPlayer, oPlayer))
             {
                 gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
-                gameBoard.Place(currPlayer);
-
-                if (currPlayer == xPlayer)
-                    currPlayer = oPlayer;
+                if (act == PlaceActions.Place)
+                {
+                    switch(gameBoard.Place(currPlayer, referee))
+                    {
+                        case -1: break;
+                        case  0:
+                            if (currPlayer == xPlayer)
+                                currPlayer = oPlayer;
+                            else
+                                currPlayer = xPlayer;
+                            break;
+                        case  1: act = PlaceActions.Shoot;  break;
+                    }
+                }
                 else
-                    currPlayer = xPlayer;
+                {
+                    if (gameBoard.Shoot(currPlayer, referee) == 0)
+                    {
+                        act = PlaceActions.Place;
+                        if (currPlayer == xPlayer)
+                            currPlayer = oPlayer;
+                        else
+                            currPlayer = xPlayer;
+                    }
+                }
             }
         }
 
