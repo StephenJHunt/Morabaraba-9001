@@ -301,16 +301,17 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MorabarabaManager : IGameManager
     {
-        public MorabarabaManager()
+        public MorabarabaManager(IBoard board, IPlayer player1, IPlayer player2, IRef r)
         {
-            xPlayer = new GamePlayer(Player.X);
-            oPlayer = new GamePlayer(Player.O);
+            xPlayer = player1;
+            oPlayer = player2;
             currPlayer = xPlayer;
-            referee = new MReferee();
+            referee = r;
+            gameBoard = board;
         }
 
         public IPlayer xPlayer, oPlayer;
-        public IBoard gameBoard = new Board();
+        public IBoard gameBoard;
         public IPlayer currPlayer;
         public IRef referee;
         public void placingPhase()
