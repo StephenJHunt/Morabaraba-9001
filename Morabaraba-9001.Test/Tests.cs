@@ -113,14 +113,20 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MovingDoesNotChangeCowNumbers()
         {
+            IRef referee = Substitute.For<IRef>();
+            referee.isValidPickUp(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            referee.isValidPutDown(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
 
             IBoard b = new Board();
             b.board["A4"] = new Cell(Player.X);
+
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
+
             x.getMove(Arg.Any<string>()).Returns("A4", "A1");
             int old = b.numCows(x.playerID);
-            //b.Move(x);
+            b.Move(x, referee);
+
             Assert.That(b.numCows(x.playerID) == old);
         }
         //flying
