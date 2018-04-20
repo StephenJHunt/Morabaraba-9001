@@ -23,8 +23,8 @@ namespace Morabaraba_9001.Test
         [Test]
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
-            //MorabarabaManager manager = new MorabarabaManager();
-            //Assert.That(manager.currPlayer.playerID == Player.X);
+            MorabarabaManager manager = new MorabarabaManager(new Board(), new GamePlayer(Player.X), new GamePlayer(Player.O), new MReferee());
+            Assert.That(manager.currPlayer.playerID == Player.X);
         }
         [Test]
         public void CowsCanOnlyBePlayedOnEmptySpaces()
