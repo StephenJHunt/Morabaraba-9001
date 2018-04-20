@@ -6,9 +6,9 @@ namespace Morabaraba_9001
 {
     public interface IRef
     {
-        bool isValidPlacement(string pos, IBoard board);
+        bool isValidPlacement(string pos, IPlayer player, IBoard board);
         bool isValidPickUp(string pos, IPlayer player, IBoard board);
-        bool isValidPutDown(string pos, IBoard board);
+        bool isValidPutDown(string piecePos, string placePos, IPlayer player, IBoard board);
         bool isValidShot(string pos, IPlayer player, IBoard board);
     }
     public interface IBoard
@@ -404,26 +404,30 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     {
         public bool isValidPickUp(string pos, IPlayer player, IBoard board)
         {
-            if (board.board[pos].getState == player.playerID)
-            {
-                return board.numCows(player.playerID) == 3 || board.isMovable(pos);
-            }
-            return false;
+            return board.board[pos].getState == player.playerID 
+                    && (board.numCows(player.playerID) == 3 
+                        || board.isMovable(pos));
         }
 
-        public bool isValidPlacement(string pos, IBoard board)
+        public bool isValidPlacement(string pos, IPlayer player, IBoard board)
         {
-            throw new NotImplementedException();
+
+            return board.board[pos].getState == Player.None
+                && player.stones > 0;
         }
 
-        public bool isValidPutDown(string pos, IBoard board)
+        public bool isValidPutDown(string piecePos, string placePos, IPlayer player, IBoard board)
         {
-            throw new NotImplementedException();
+            return (board.numCows(player.playerID) == 3
+                    || Board.neighbours[piecePos].Contains(placePos))
+                    && board.board[placePos].getState == Player.None;
         }
 
         public bool isValidShot(string pos, IPlayer player, IBoard board)
         {
-            throw new NotImplementedException();
+            return board.board[pos].getState == player.getOpponent()
+                   && (!board.isInMill(pos)
+                       || board.allInMill(player.getOpponent()));
         }
     }
 
