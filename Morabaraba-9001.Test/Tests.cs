@@ -50,14 +50,22 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowsCannotBeMovedDuringPlacement()//leave for later
         {
+            IRef referee = Substitute.For<IRef>();
+            
             IBoard b = Substitute.For<Board>();
             MorabarabaManager manager = Substitute.For<MorabarabaManager>();
             //placing phase (need some way to break the loop in it for a test)
             IPlayer pl = Substitute.For<IPlayer>();
             pl.playerID.Returns(Player.X);
+            
             IPlayer pl2 = Substitute.For<IPlayer>();
             pl2.playerID.Returns(Player.O);
 
+
+            pl.getMove(Arg.Any<string>()).Returns("A1", "A7", "B4", "C3", "C5", "D2", "D5", "D7", "E4", "F2", "F6", "G4");
+            pl2.getMove(Arg.Any<string>()).Returns("A4", "B2", "B6", "C4", "D1", "D3", "D6", "E3", "E5", "F4", "G1", "G7");
+
+            b.DidNotReceive().Move(Arg.Any<IPlayer>(), Arg.Any<IRef>());
             //manager.placingPhase();
             //placing phase
             //pl.getMove(Arg.Any<string>()).Returns("A1", "A7", "B4", "C3", "C5", "D2", "D5", "D7", "E4", "F2", "F6", "G4");//get a place input and a move input
@@ -68,7 +76,7 @@ namespace Morabaraba_9001.Test
             //manager.oPlayer = pl;
             //manager.gameBoard = b;
             //manager.placingPhase();
-            pl.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4");//get a place input and a move input
+            //pl.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4");//get a place input and a move input
             //b.Place(pl);//place the cow
             //b.DidNotReceiveWithAnyArgs().Move(pl);//no moves made when placing a cow
         }
@@ -76,13 +84,16 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ANormalCowCanOnlyMoveToAConnectedSpace()
         {
-            IBoard b = new Board();
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<Board>();
+            b.board["A1"] = new Cell(Player.X);
+            b.board["A4"] = new Cell(Player.None);
+            b.board["A7"] = new Cell(Player.None);
             IPlayer x = Substitute.For<IPlayer>();
-            x.playerID.Returns(Player.X);
-            b.board["A1"] = new Cell(x.playerID);
-            x.getMove(Arg.Any<string>()).Returns( "A1", "G7", "A4");
-            //b.Move(x);
-            x.Received(3).getMove(Arg.Any<string>());
+            x.playerID = Player.X;
+            x.stones.Returns(12);
+            Assert.That(referee.isValidPutDown("A1", "A4", x, b));
+            Assert.That(!referee.isValidPutDown("A1", "A7", x, b));
         }
         [Test]
         public void CowCanOnlyMoveToEmptySpace()
