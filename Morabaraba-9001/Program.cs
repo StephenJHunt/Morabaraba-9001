@@ -20,7 +20,7 @@ namespace Morabaraba_9001
 
         PlaceResult Place(IPlayer player, IRef referee);
 
-        void Move(IPlayer player);
+        MoveResult Move(IPlayer player, IRef referee);
 
         ShootResult Shoot(IPlayer player, IRef referee);
 
@@ -66,7 +66,8 @@ namespace Morabaraba_9001
     public enum PlaceAction {Place, Shoot}
     public enum PlaceResult {Invalid, MillMade, Done}
     public enum ShootResult {Invalid, Done}
-
+    public enum MoveAction {Move, Shoot}
+    public enum MoveResult {InvalidPickUp, InvalidPutDown, MillMade, Done}
     public interface IGameManager
     {
         void placingPhase();
@@ -200,17 +201,21 @@ namespace Morabaraba_9001
                 return PlaceResult.Done;
         }
 
-        public void Move(IPlayer player)
+        public MoveResult Move(IPlayer player, IRef referee)
         {
-            string piecePos = InputHandler.PickUpInput(player, this);
-            string placePos = InputHandler.PutDownInput(piecePos, player, this);
+            string piecePos = player.getMove("Enter piece to move: ");
+            if (!referee.isValidPickUp(piecePos, player, this))
+                return MoveResult.InvalidPickUp;
+            string placePos = player.getMove($@"Place {piecePos} at position: ");
+            if (!referee.isValidPutDown(piecePos, placePos, player, this))
+                return MoveResult.InvalidPutDown;
             board[piecePos].changeState(Player.None);
             board[placePos].changeState(player.playerID);
             if (isInMill(placePos))
             {
-                Display("");
-                //Shoot(player);
+                return MoveResult.MillMade;
             }
+            return MoveResult.Done;
         }
 
         public ShootResult Shoot(IPlayer player, IRef referee)
