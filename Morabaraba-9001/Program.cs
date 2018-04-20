@@ -10,6 +10,7 @@ namespace Morabaraba_9001
         bool isValidPickUp(string pos, IPlayer player, IBoard board);
         bool isValidPutDown(string piecePos, string placePos, IPlayer player, IBoard board);
         bool isValidShot(string pos, IPlayer player, IBoard board);
+        bool inPlacing(IPlayer player1, IPlayer player2);
     }
     public interface IBoard
     {
@@ -295,11 +296,13 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             xPlayer = new GamePlayer(Player.X);
             oPlayer = new GamePlayer(Player.O);
             currPlayer = xPlayer;
+            referee = new MReferee();
         }
 
         public IPlayer xPlayer, oPlayer;
         public IBoard gameBoard = new Board();
         public IPlayer currPlayer;
+        public IRef referee;
         public void placingPhase()
         {
             while (currPlayer.stones > 0)
@@ -402,6 +405,11 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class MReferee : IRef
     {
+        public bool inPlacing(IPlayer player1, IPlayer player2)
+        {
+            return player1.stones > 0 || player2.stones > 0;
+        }
+
         public bool isValidPickUp(string pos, IPlayer player, IBoard board)
         {
             return board.board[pos].getState == player.playerID 
