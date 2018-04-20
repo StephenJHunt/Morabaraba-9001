@@ -98,16 +98,17 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowCanOnlyMoveToEmptySpace()
         {
-            IBoard b = new Board();
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<Board>();
             b.board["A1"] = new Cell(Player.X);
-            b.board["A4"] = new Cell(Player.X);
-            b.board["D1"] = new Cell(Player.O);
+            b.board["A4"] = new Cell(Player.O);
             b.board["B2"] = new Cell(Player.None);
             IPlayer x = Substitute.For<IPlayer>();
-            x.playerID.Returns(Player.X);
-            x.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4", "D1", "B2");
-           // b.Move(x);
-            x.Received(5).getMove(Arg.Any<string>());
+            x.playerID = Player.X;
+            x.stones.Returns(12);
+            Assert.That(!referee.isValidPutDown("A1", "A4", x, b));
+            Assert.That(!referee.isValidPutDown("A1", "A1", x, b));
+            Assert.That(referee.isValidPutDown("A1", "B2", x, b));
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
