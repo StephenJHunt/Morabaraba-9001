@@ -17,11 +17,11 @@ namespace Morabaraba_9001
         Dictionary<string, ICell> board {get; }
         int numCows(Player player);
 
-        int Place(IPlayer player, IRef referee);
+        PlaceResult Place(IPlayer player, IRef referee);
 
         void Move(IPlayer player);
 
-        int Shoot(IPlayer player, IRef referee);
+        ShootResult Shoot(IPlayer player, IRef referee);
 
         List<ICell> getNeighbours(string pos);
 
@@ -62,7 +62,9 @@ namespace Morabaraba_9001
 
     //public enum CellState { X, O, Empty }
     public enum Player { X, O, None }
-    public enum PlaceActions {Place, Shoot}
+    public enum PlaceAction {Place, Shoot}
+    public enum PlaceResult {Invalid, MillMade, Done}
+    public enum ShootResult {Invalid, Done}
 
     public interface IGameManager
     {
@@ -182,19 +184,19 @@ namespace Morabaraba_9001
             return neighbourList;
         }
 
-        public int Place(IPlayer player, IRef referee)
+        public PlaceResult Place(IPlayer player, IRef referee)
         {
             string placePos = player.getMove("Select place position: ");
             if (!referee.isValidPlacement(placePos, player, this))
-                return -1;
+                return PlaceResult.Invalid;
 
             board[placePos].changeState(player.playerID);
             player.reduceStones();
 
             if (isInMill(placePos))
-                return 1;
+                return PlaceResult.MillMade;
             else
-                return 0;
+                return PlaceResult.Done;
         }
 
         public void Move(IPlayer player)
@@ -210,13 +212,13 @@ namespace Morabaraba_9001
             }
         }
 
-        public int Shoot(IPlayer player, IRef referee)
+        public ShootResult Shoot(IPlayer player, IRef referee)
         {
             string shootPos = player.getMove("Enter a position to shoot");
             if (!referee.isValidShot(shootPos, player, this))
-                return -1;
+                return ShootResult.Invalid;
             board[shootPos].changeState(Player.None);
-            return 0;
+            return ShootResult.Done;
         }
 
         public bool isMovable(string pos)
@@ -316,29 +318,29 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         public IRef referee;
         public void placingPhase()
         {
-            PlaceActions act = PlaceActions.Place;
+            PlaceAction act = PlaceAction.Place;
             while (referee.inPlacing(xPlayer, oPlayer))
             {
                 gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
-                if (act == PlaceActions.Place)
+                if (act == PlaceAction.Place)
                 {
                     switch(gameBoard.Place(currPlayer, referee))
                     {
-                        case -1: break;
-                        case  0:
+                        case PlaceResult.Invalid: break;
+                        case  PlaceResult.Done:
                             if (currPlayer == xPlayer)
                                 currPlayer = oPlayer;
                             else
                                 currPlayer = xPlayer;
                             break;
-                        case  1: act = PlaceActions.Shoot;  break;
+                        case  PlaceResult.MillMade: act = PlaceAction.Shoot;  break;
                     }
                 }
                 else
                 {
-                    if (gameBoard.Shoot(currPlayer, referee) == 0)
+                    if (gameBoard.Shoot(currPlayer, referee) == ShootResult.Done)
                     {
-                        act = PlaceActions.Place;
+                        act = PlaceAction.Place;
                         if (currPlayer == xPlayer)
                             currPlayer = oPlayer;
                         else
@@ -538,7 +540,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
     {
         private static void Main(string[] args)
         {
-            IGameManager manager = new MorabarabaManager();
+            IGameManager manager = new MorabarabaManager(new Board(), new GamePlayer(Player.X), new GamePlayer(Player.O), new MReferee());
             manager.placingPhase();
             Console.WriteLine(manager.movingPhase());
             Console.ReadLine();
