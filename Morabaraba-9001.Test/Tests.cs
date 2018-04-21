@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using NSubstitute;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Morabaraba_9001.Test
 {
@@ -106,21 +107,22 @@ namespace Morabaraba_9001.Test
         [Test]
         public void MovingDoesNotChangeCowNumbers()
         {
-            //IRef referee = Substitute.For<IRef>();
-            //referee.isValidPickUp(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
-            //referee.isValidPutDown(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            IRef referee = Substitute.For<IRef>();
+            referee.isValidPickUp(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            referee.isValidPlacement(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            referee.isValidPutDown(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
 
-            //IBoard b = new Board();
-            //b.board["A4"] = new Cell(Player.X);
+            IBoard b = new Board();
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
 
-            //IPlayer x = Substitute.For<IPlayer>();
-            //x.playerID.Returns(Player.X);
+            x.getMove(Arg.Any<string>()).Returns("A4", "A1");
+            b.Place(x, referee);
 
-            //x.getMove(Arg.Any<string>()).Returns("A4", "A1");
-            //int old = b.numCows(x.playerID);
-            //b.Move(x, referee);
-
-            //Assert.That(b.numCows(x.playerID) == old);
+            Assert.That(b.numCows(x.playerID) == 1);
+            x.getMove(Arg.Any<string>()).Returns("A4", "A1");
+            Assert.That(b.Move(x, referee) == MoveResult.Done);
+            Assert.That(b.numCows(x.playerID) == 1);
         }
         //flying
         [Test]
