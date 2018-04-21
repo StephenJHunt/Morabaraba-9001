@@ -203,7 +203,8 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenOtherCowsOfSamePlayerNotInMillCannotBeShot()
         {
-            IBoard b = new Board();
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -211,22 +212,21 @@ namespace Morabaraba_9001.Test
             o.playerID.Returns(Player.O);
             o.getOpponent().Returns(Player.X);
 
-            x.getMove(Arg.Any<string>()).Returns("A1");//placing an X piece for O to take
-            //b.Place(x);
+            b.getCellState("A1").Returns(Player.X);
+            b.getCellState("A4").Returns(Player.X);
+            b.getCellState("A7").Returns(Player.X);
+            b.getCellState("B2").Returns(Player.X);
+            b.isInMill("A1").Returns(true);
+            b.isInMill("A4").Returns(true);
+            b.isInMill("A7").Returns(true);
+            b.isInMill("B2").Returns(false);
 
-            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F2", "G7", "A1");//Making O mill with one piece placed outside and shooting X at A1
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
+            Assert.That(!referee.isValidShot("A1", o, b));
+            Assert.That(!referee.isValidShot("A4", o, b));
+            Assert.That(!referee.isValidShot("A7", o, b));
+            Assert.That(referee.isValidShot("B2", o, b));
 
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1", "F2");//Making X mill, trying to shoot G1 in mill, failing and shooting F2, which is not in mill
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(x);
 
-            //Assert.That(b.board["G1"].getState == o.playerID && b.board["F2"].getState == Player.None);//test that the cow in a mill couldnt be shot and the one out could and was
-            //2
         }
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
