@@ -322,24 +322,18 @@ namespace Morabaraba_9001.Test
         [Test]
         public void WinIfOpponentHas2OrLessCowsLeftAfterPlacement()
         {
-            //MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            //IBoard b = manager.gameBoard;
-            //IPlayer x = Substitute.For<IPlayer>();
-            //IPlayer o = Substitute.For<IPlayer>();
-            //x.setID(Player.X);
-            //o.setID(Player.O);
-
-            //x.getMove(Arg.Any<string>()).Returns("A1", "A4", "B4", "B4", "A7", "F4");
-            //o.getMove(Arg.Any<string>()).Returns("G1", "G4", "F4");
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-
-
-            //Assert.That(manager.movingPhase(), Is.EqualTo("X wins!"));
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            o.playerID.Returns(Player.O);
+            x.stones.Returns(0);
+            o.stones.Returns(0);
+            b.numCows(x.playerID).Returns(2);
+            b.numCows(o.playerID).Returns(3);
+            Assert.That(referee.inPlacing(x, o) == false);
+            Assert.That(referee.getGameState(x, o, b) == GameResult.Player2);
         }
     }
 }
