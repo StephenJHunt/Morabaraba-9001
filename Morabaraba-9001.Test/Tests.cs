@@ -49,7 +49,7 @@ namespace Morabaraba_9001.Test
             Assert.That(Player2.stones == 12);
         }
         [Test]
-        public void CowsCannotBeMovedDuringPlacement()//leave for later
+        public void CowsCannotBeMovedDuringPlacement()
         {
             IRef referee = Substitute.For<IRef>();
             IBoard b = Substitute.For<IBoard>();
@@ -75,7 +75,7 @@ namespace Morabaraba_9001.Test
         }
         //moving
         [Test]
-        public void ANormalCowCanOnlyMoveToAConnectedSpace()
+        public void ANormalCowCanOnlyMoveToAConnectedSpace()//TODO
         {
             //IRef referee = new MReferee();
             //IBoard b = Substitute.For<Board>();
@@ -91,17 +91,17 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowCanOnlyMoveToEmptySpace()
         {
-            //IRef referee = new MReferee();
-            //IBoard b = Substitute.For<Board>();
-            //b.board["A1"] = new Cell(Player.X);
-            //b.board["A4"] = new Cell(Player.O);
-            //b.board["B2"] = new Cell(Player.None);
-            //IPlayer x = Substitute.For<IPlayer>();
-            //x.playerID = Player.X;
-            //x.stones.Returns(12);
-            //Assert.That(!referee.isValidPutDown("A1", "A4", x, b));
-            //Assert.That(!referee.isValidPutDown("A1", "A1", x, b));
-            //Assert.That(referee.isValidPutDown("A1", "B2", x, b));
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
+            b.getCellState("A1").Returns(Player.X);
+            b.getCellState("A4").Returns(Player.O);
+            b.getCellState("B2").Returns(Player.None);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.stones.Returns(12);
+            Assert.That(!referee.isValidPutDown("A1", "A4", x, b));
+            Assert.That(!referee.isValidPutDown("A1", "A1", x, b));
+            Assert.That(referee.isValidPutDown("A1", "B2", x, b));
         }
         [Test]
         public void MovingDoesNotChangeCowNumbers()
@@ -124,7 +124,7 @@ namespace Morabaraba_9001.Test
         }
         //flying
         [Test]
-        public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()
+        public void CowsCanMoveToAnyEmptySpaceWhenOnly3OfThatPlayersCowsRemain()//TODO
         {
             //IRef referee = new MReferee();
             //IBoard b = Substitute.For<Board>();
@@ -146,7 +146,7 @@ namespace Morabaraba_9001.Test
         }
         //general
         [Test]
-        public void MillIsFormedBy3SameCowsInALine()
+        public void MillIsFormedBy3SameCowsInALine()//TODO
         {
             //IBoard b = new Board();
             //b.board["A1"] = new Cell(Player.X);
@@ -157,7 +157,7 @@ namespace Morabaraba_9001.Test
             //Assert.That(b.isInMill("A1") == true);
         }
         [Test]
-        public void MillNotFormedWhenNotSamePlayer()
+        public void MillNotFormedWhenNotSamePlayer()//TODO
         {
             //IBoard b = new Board();
             //b.board["A1"] = new Cell(Player.X);
@@ -166,7 +166,7 @@ namespace Morabaraba_9001.Test
             //Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("A7"));
         }
         [Test]
-        public void MillNotFormedWhenConnectionsDoNotFormLine()
+        public void MillNotFormedWhenConnectionsDoNotFormLine()//TODO
         {
             //IBoard b = new Board();
             //b.board["A1"] = new Cell(Player.X);
