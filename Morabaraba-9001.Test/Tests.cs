@@ -52,34 +52,26 @@ namespace Morabaraba_9001.Test
         public void CowsCannotBeMovedDuringPlacement()//leave for later
         {
             IRef referee = Substitute.For<IRef>();
-            
-            IBoard b = Substitute.For<Board>();
-            MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            //placing phase (need some way to break the loop in it for a test)
-            IPlayer pl = Substitute.For<IPlayer>();
-            pl.playerID.Returns(Player.X);
-            
+            IBoard b = Substitute.For<IBoard>();
+            IPlayer pl1 = Substitute.For<IPlayer>();
             IPlayer pl2 = Substitute.For<IPlayer>();
+
+            pl1.playerID.Returns(Player.X);
             pl2.playerID.Returns(Player.O);
 
-
-            pl.getMove(Arg.Any<string>()).Returns("A1", "A7", "B4", "C3", "C5", "D2", "D5", "D7", "E4", "F2", "F6", "G4");
+            pl1.getMove(Arg.Any<string>()).Returns("A1", "A7", "B4", "C3", "C5", "D2", "D5", "D7", "E4", "F2", "F6", "G4");
             pl2.getMove(Arg.Any<string>()).Returns("A4", "B2", "B6", "C4", "D1", "D3", "D6", "E3", "E5", "F4", "G1", "G7");
 
+            b.Place(Arg.Any<IPlayer>(), Arg.Any<IRef>()).ReturnsForAnyArgs(PlaceResult.Done);
+
+            referee.inPlacing(Arg.Any<IPlayer>(), Arg.Any<IPlayer>()).ReturnsForAnyArgs(true, true, true, true, true, true, true, true, true, true, true, true,
+                                                                                        true, true, true, true, true, true, true, true, true, true, true, true, false);
+
+            MorabarabaManager manager = new MorabarabaManager(b, pl1, pl2, referee);
+            manager.placingPhase();
+
             b.DidNotReceive().Move(Arg.Any<IPlayer>(), Arg.Any<IRef>());
-            //manager.placingPhase();
-            //placing phase
-            //pl.getMove(Arg.Any<string>()).Returns("A1", "A7", "B4", "C3", "C5", "D2", "D5", "D7", "E4", "F2", "F6", "G4");//get a place input and a move input
-            //pl.stones.Returns(12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
-            //pl2.getMove(Arg.Any<string>()).Returns("A4", "B2", "B6", "C4", "D1", "D3", "D6", "E3", "E5", "F4", "G1", "G7");
-            //pl.stones.Returns(12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
-            //manager.xPlayer = pl;
-            //manager.oPlayer = pl;
-            //manager.gameBoard = b;
-            //manager.placingPhase();
-            //pl.getMove(Arg.Any<string>()).Returns("A1", "A1", "A4");//get a place input and a move input
-            //b.Place(pl);//place the cow
-            //b.DidNotReceiveWithAnyArgs().Move(pl);//no moves made when placing a cow
+
         }
         //moving
         [Test]
