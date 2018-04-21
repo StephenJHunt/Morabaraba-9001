@@ -61,7 +61,7 @@ namespace Morabaraba_9001
         Player getOpponent();
 
         int stones { get; }
-        void reduceStones();
+        void Placed();
         string ToString();
     }
 
@@ -194,7 +194,7 @@ namespace Morabaraba_9001
                 return PlaceResult.Invalid;
 
             board[placePos].changeState(player.playerID);
-            player.reduceStones();
+            player.Placed();
 
             if (isInMill(placePos))
                 return PlaceResult.MillMade;
@@ -410,11 +410,12 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             gameplayerID = player;
             numStones = 12;
         }
-        
 
-        public void reduceStones()
+
+        public void Placed()
         {
-            numStones--;
+            if (numStones > 0)
+                numStones--;
         }
 
         Player IPlayer.playerID { get => gameplayerID; }
