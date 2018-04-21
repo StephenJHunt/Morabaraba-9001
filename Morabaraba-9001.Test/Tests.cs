@@ -2634,16 +2634,42 @@ namespace Morabaraba_9001.Test
 
         }
         //general
-        [Test]
-        public void MillIsFormedBy3SameCowsInALine()//TODO
+
+        static object[] mills =
         {
-            //IBoard b = new Board();
-            //b.board["A1"] = new Cell(Player.X);
-            //Assert.That(b.isInMill("A1") == false);
-            //b.board["A4"] = new Cell(Player.X);
-            //Assert.That(b.isInMill("A1") == false);
-            //b.board["A7"] = new Cell(Player.X);
-            //Assert.That(b.isInMill("A1") == true);
+            new object[] {"A1", "A4", "A7"},
+            new object[] {"B2", "B4", "B6"},
+            new object[] {"C3", "C4", "C5"},
+            new object[] {"D1", "D2", "D3"},
+            new object[] {"D5", "D6", "D7"},
+            new object[] {"E3", "E4", "E5"},
+            new object[] {"F2", "F4", "F6"},
+            new object[] {"G1", "G4", "G7"},
+
+            new object[] {"A1", "D1", "G1"},
+            new object[] {"B2", "D2", "F2"},
+            new object[] {"C3", "D3", "E3"},
+            new object[] {"A4", "B4", "C4"},
+            new object[] {"E4", "F4", "G4"},
+            new object[] {"C5", "D5", "E5"},
+            new object[] {"B6", "D6", "F6"},
+            new object[] {"A7", "D7", "G7"},
+
+            new object[] {"A1", "B2", "C3"},
+            new object[] {"G1", "F2", "E3"},
+            new object[] {"G7", "F6", "E5"},
+            new object[] { "A7", "B6", "C5"}
+        };
+        [Test]
+        [TestCaseSource(nameof(mills))]
+        public void MillIsFormedBy3SameCowsInALine(string pos1, string pos2, string pos3)//TODO
+        {
+            IBoard b = Substitute.ForPartsOf<Board>();
+            b.getCellState(pos1).Returns(Player.X);
+            b.getCellState(pos2).Returns(Player.X);
+            b.getCellState(pos3).Returns(Player.X);
+
+            Assert.That(b.isInMill(pos1) && b.isInMill(pos2) && b.isInMill(pos3));
         }
         [Test]
         public void MillNotFormedWhenNotSamePlayer()//TODO
