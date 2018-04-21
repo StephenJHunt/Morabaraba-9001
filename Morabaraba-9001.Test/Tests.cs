@@ -289,49 +289,35 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
-            IBoard b = new Board();
-            IPlayer x = Substitute.For<IPlayer>();
-            IPlayer o = Substitute.For<IPlayer>();
-            x.playerID.Returns(Player.X);
-            x.getOpponent().Returns(Player.O);
-            o.playerID.Returns(Player.O);
-            o.getOpponent().Returns(Player.X);
+            //IBoard b = new Board();
+            //IPlayer x = Substitute.For<IPlayer>();
+            //IPlayer o = Substitute.For<IPlayer>();
+            //x.playerID.Returns(Player.X);
+            //x.getOpponent().Returns(Player.O);
+            //o.playerID.Returns(Player.O);
+            //o.getOpponent().Returns(Player.X);
 
-            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
-            //b.Place(o);
-            x.getMove(Arg.Any<string>()).Returns("A4");//shoots opponent at A4
-            //b.Shoot(x);
+            //o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
+            ////b.Place(o);
+            //x.getMove(Arg.Any<string>()).Returns("A4");//shoots opponent at A4
+            ////b.Shoot(x);
 
-            //Assert.That(b.board["A4"].getState == Player.None);//check that position of shot cow is now empty
-            //6
+            ////Assert.That(b.board["A4"].getState == Player.None);//check that position of shot cow is now empty
+            ////6
         }
         [Test]
         public void WinIfOpponentCannotMove()
         {
-            //MorabarabaManager manager = Substitute.For<MorabarabaManager>();
-            //IBoard b = manager.gameBoard;
-            //IPlayer x = Substitute.For<IPlayer>();
-            //IPlayer o = Substitute.For<IPlayer>();
-            //x.playerID = Player.X;
-            //o.playerID = Player.O;
-
-            //x.getMove(Arg.Any<string>()).Returns("A1", "G1", "A7", "G7");
-            //o.getMove(Arg.Any<string>()).Returns("D1", "A4", "B2", "B6", "D7", "F6", "G4", "F2");//surrounds X pieces without making mills
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-
-
-            //Assert.That(manager.movingPhase(), Is.EqualTo("O wins!"));
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
+            IPlayer x = Substitute.For<IPlayer>();
+            IPlayer o = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            o.playerID.Returns(Player.O);
+            b.canPlay(x).Returns(false);
+            b.canPlay(o).Returns(true);
+            Assert.That(referee.getGameState(x, o, b) == GameResult.Player2);
+            
         }
         [Test]
         public void WinIfOpponentHas2OrLessCowsLeftAfterPlacement()
