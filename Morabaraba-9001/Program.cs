@@ -23,7 +23,7 @@ namespace Morabaraba_9001
     }
     public interface IBoard
     {
-        Dictionary<string, ICell> board {get; }
+        Player getCellState(string pos);
         int numCows(Player player);
 
         PlaceResult Place(IPlayer player, IRef referee);
@@ -152,14 +152,17 @@ namespace Morabaraba_9001
 
         private Dictionary<string, ICell> board = new Dictionary<string, ICell>();
 
-        Dictionary<string, ICell> IBoard.board => board;
-
         public Board()
         {
             foreach (string pos in validPositions)//initialising board with empty values
             {
                 board.Add(pos, new Cell(Player.None));
             }
+        }
+
+        public Player getCellState(string pos)
+        {
+            return board[pos].getState();
         }
 
         public int numCows(Player player)
@@ -476,7 +479,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
         public bool isValidPickUp(string pos, IPlayer player, IBoard board)
         {
-            return board.board[pos].getState() == player.playerID 
+            return board.getCellState(pos) == player.playerID 
                     && (board.numCows(player.playerID) == 3 
                         || board.isMovable(pos));
         }
@@ -484,7 +487,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         public bool isValidPlacement(string pos, IPlayer player, IBoard board)
         {
 
-            return board.board[pos].getState() == Player.None
+            return board.getCellState(pos)== Player.None
                 && player.stones > 0;
         }
 
@@ -492,12 +495,12 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         {
             return (board.numCows(player.playerID) == 3
                     || Board.neighbours[piecePos].Contains(placePos))
-                    && board.board[placePos].getState() == Player.None;
+                    && board.getCellState(placePos) == Player.None;
         }
 
         public bool isValidShot(string pos, IPlayer player, IBoard board)
         {
-            return board.board[pos].getState() == player.getOpponent()
+            return board.getCellState(pos) == player.getOpponent()
                    && (!board.isInMill(pos)
                        || board.allInMill(player.getOpponent()));
         }
