@@ -177,11 +177,12 @@ namespace Morabaraba_9001.Test
             //Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("B4"));
         }
         [Test]
-        public void ShootingOnlyPossibleOnMillCreation()//confusion
+        public void ShootingOnlyPossibleOnMillCreation()
         {
             //check shooting is only possible by showing that it only happens once even with many pieces being placed, during which only one mill is formed
-            IBoard b = new Board();
-            
+            IRef referee = Substitute.For<IRef>();
+            referee.isValidPlacement(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            IBoard b = Substitute.ForPartsOf<Board>();
             IPlayer x = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
             x.getOpponent().Returns(Player.O);
@@ -190,11 +191,13 @@ namespace Morabaraba_9001.Test
             o.getOpponent().Returns(Player.X);
 
             o.getMove(Arg.Any<string>()).Returns("G1");
-            //b.Place(o);
+            b.Place(o, referee);
+            b.DidNotReceive().Shoot(o, referee);
             x.getMove(Arg.Any<string>()).Returns("A1", "A4", "A7", "G1");
-            //b.Place(x);
-            //b.Place(x);
-            //b.Place(x);
+            b.Place(x, referee);
+            b.Place(x, referee);
+            b.Place(x, referee);
+            b.Received(1).Shoot(x, referee);
             //Assert.That(b.board["A1"].getState == x.playerID &&b.board["A4"].getState == x.playerID && b.board["A7"].getState == x.playerID && b.board["G1"].getState == Player.None);
         }
         [Test]
