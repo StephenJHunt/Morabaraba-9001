@@ -2701,14 +2701,45 @@ namespace Morabaraba_9001.Test
             b.getCellState(pos3).Returns(Player.O);
             Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
         }
-        [Test]
-        public void MillNotFormedWhenConnectionsDoNotFormLine()//TODO
+
+        static object[] notMillLines = 
         {
-            //IBoard b = new Board();
-            //b.board["A1"] = new Cell(Player.X);
-            //b.board["A4"] = new Cell(Player.X);
-            //b.board["B4"] = new Cell(Player.X);
-            //Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("B4"));
+            new object[] {"A1", "A4", "B2"},
+            new object[] {"A4", "B4", "B6" },
+            new object[] {"A7", "B6", "B4" },
+            new object[] {"B2", "C3", "C4" },
+            new object[] {"B4", "A4", "B2" },
+            new object[] {"B6", "B4", "C4" },
+            new object[] {"C3", "B2", "D2" },
+            new object[] {"C4", "C5", "D5" },
+            new object[] {"C5", "D5", "D6" },
+            new object[] {"D1", "D2", "F2" },
+            new object[] {"D2", "F2", "G1" },
+            new object[] {"D3", "E3", "E4" },
+            new object[] {"D5", "E5", "E4" },
+            new object[] {"D6", "F6", "F4" },
+            new object[] {"D7", "G7", "G4" },
+            new object[] {"E3", "F2", "F4" },
+            new object[] {"E4", "F4", "F6" },
+            new object[] {"E5", "F6", "F4" },
+            new object[] {"F2", "F4", "G4" },
+            new object[] {"F4", "F2", "G1" },
+            new object[] {"F6", "G7", "D7" },
+            new object[] {"G1", "G4", "F4" },
+            new object[] {"G4", "F4", "F6" },
+            new object[] {"G7", "D7", "D6" }
+        };
+
+
+        [Test]
+        [TestCaseSource(nameof(notMillLines))]
+        public void MillNotFormedWhenConnectionsDoNotFormLine(string pos1, string pos2, string pos3)
+        {
+            IBoard b = Substitute.ForPartsOf<Board>();
+            b.getCellState(pos1).Returns(Player.X);
+            b.getCellState(pos2).Returns(Player.X);
+            b.getCellState(pos3).Returns(Player.X);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
         }
         [Test]
         public void ShootingOnlyPossibleOnMillCreation()
