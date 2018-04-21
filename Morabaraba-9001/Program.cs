@@ -23,6 +23,7 @@ namespace Morabaraba_9001
     }
     public interface IBoard
     {
+        Dictionary<string, ICell> getBoard();
         Player getCellState(string pos);
         ICell getCell(string pos);
         int numCows(Player player);
@@ -159,6 +160,11 @@ namespace Morabaraba_9001
             }
         }
 
+        public virtual Dictionary<string, ICell> getBoard()
+        {
+            return board;
+        }
+
         public virtual Player getCellState(string pos)
         {
             return board[pos].getState();
@@ -251,7 +257,7 @@ namespace Morabaraba_9001
                 return true;
             IEnumerable<string> query =
                 from pos in board.Keys
-                where board[pos].getState() == player.playerID
+                where getCellState(pos) == player.playerID
                 where isMovable(pos)
                 select pos;
             return query.Any();
@@ -261,7 +267,7 @@ namespace Morabaraba_9001
         {
             foreach (string pos in board.Keys)
             {
-                if (board[pos].getState() == player && !isInMill(pos))
+                if (getCellState(pos) == player && !isInMill(pos))
                     return false;
             }
             return true;
