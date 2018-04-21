@@ -255,7 +255,8 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CannotShootOwnCows()//baka!
         {
-            IBoard b = new Board();
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -263,15 +264,10 @@ namespace Morabaraba_9001.Test
             o.playerID.Returns(Player.O);
             o.getOpponent().Returns(Player.X);
 
-            x.getMove(Arg.Any<string>()).Returns("A1");//set own piece to try shoot at A1
-            //b.Place(x);
-            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
-            //b.Place(o);
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot own cow at A1 then shoots opponent at A4 to break out of loop
-            //b.Shoot(x);
+            b.getCellState("A1").Returns(Player.X);
+            b.isInMill("A1").Returns(false);
 
-           // Assert.That(b.board["A1"].getState == x.playerID && b.board["A4"].getState == Player.None);//check that own piece is untouched and opponent is shot
-            //4
+            Assert.That(!referee.isValidShot("A1", x, b));
         }
         [Test]
         public void CannotShootEmptySpace()
