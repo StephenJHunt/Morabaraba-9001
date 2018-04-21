@@ -2662,7 +2662,7 @@ namespace Morabaraba_9001.Test
         };
         [Test]
         [TestCaseSource(nameof(mills))]
-        public void MillIsFormedBy3SameCowsInALine(string pos1, string pos2, string pos3)//TODO
+        public void MillIsFormedBy3SameCowsInALine(string pos1, string pos2, string pos3)
         {
             IBoard b = Substitute.ForPartsOf<Board>();
             b.getCellState(pos1).Returns(Player.X);
@@ -2672,13 +2672,34 @@ namespace Morabaraba_9001.Test
             Assert.That(b.isInMill(pos1) && b.isInMill(pos2) && b.isInMill(pos3));
         }
         [Test]
-        public void MillNotFormedWhenNotSamePlayer()//TODO
+        [TestCaseSource(nameof(mills))]
+        public void MillNotFormedWhenNotSamePlayer(string pos1, string pos2, string pos3)
         {
-            //IBoard b = new Board();
-            //b.board["A1"] = new Cell(Player.X);
-            //b.board["A4"] = new Cell(Player.O);
-            //b.board["A7"] = new Cell(Player.X);
-            //Assert.That(!b.isInMill("A1") && !b.isInMill("A4") && !b.isInMill("A7"));
+            IBoard b = Substitute.ForPartsOf<Board>();
+            b.getCellState(pos1).Returns(Player.X);
+            b.getCellState(pos2).Returns(Player.O);
+            b.getCellState(pos3).Returns(Player.O);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
+            b.getCellState(pos1).Returns(Player.X);
+            b.getCellState(pos2).Returns(Player.X);
+            b.getCellState(pos3).Returns(Player.O);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
+            b.getCellState(pos1).Returns(Player.X);
+            b.getCellState(pos2).Returns(Player.O);
+            b.getCellState(pos3).Returns(Player.X);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
+            b.getCellState(pos1).Returns(Player.O);
+            b.getCellState(pos2).Returns(Player.O);
+            b.getCellState(pos3).Returns(Player.X);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
+            b.getCellState(pos1).Returns(Player.O);
+            b.getCellState(pos2).Returns(Player.X);
+            b.getCellState(pos3).Returns(Player.X);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
+            b.getCellState(pos1).Returns(Player.O);
+            b.getCellState(pos2).Returns(Player.X);
+            b.getCellState(pos3).Returns(Player.O);
+            Assert.That(!b.isInMill(pos1) && !b.isInMill(pos2) && !b.isInMill(pos3));
         }
         [Test]
         public void MillNotFormedWhenConnectionsDoNotFormLine()//TODO
