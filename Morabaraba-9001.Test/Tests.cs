@@ -76,8 +76,6 @@ namespace Morabaraba_9001.Test
         }
         //moving
 
-
-
         static object[] ConnectedMoves =
         {
             new object[] {"A1", "A4", true},
@@ -742,9 +740,7 @@ namespace Morabaraba_9001.Test
             Assert.That(referee.isValidPutDown(pos, neighbour, x, b) == expected);
         }
 
-
-
-
+        
         static object[] EmptyMoves =
         {
             new object[] {"A1", "A1", Player.O, false},
@@ -2730,7 +2726,6 @@ namespace Morabaraba_9001.Test
             new object[] {"G7", "D7", "D6" }
         };
 
-
         [Test]
         [TestCaseSource(nameof(notMillLines))]
         public void MillNotFormedWhenConnectionsDoNotFormLine(string pos1, string pos2, string pos3)
@@ -2854,21 +2849,29 @@ namespace Morabaraba_9001.Test
         [Test]
         public void ShotCowsRemovedFromBoard()
         {
-            //IBoard b = new Board();
-            //IPlayer x = Substitute.For<IPlayer>();
-            //IPlayer o = Substitute.For<IPlayer>();
-            //x.playerID.Returns(Player.X);
-            //x.getOpponent().Returns(Player.O);
-            //o.playerID.Returns(Player.O);
-            //o.getOpponent().Returns(Player.X);
+            IRef referee = Substitute.For<IRef>();
+            referee.isValidPlacement(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            referee.isValidShot(Arg.Any<string>(), Arg.Any<IPlayer>(), Arg.Any<IBoard>()).ReturnsForAnyArgs(true);
+            IBoard b = new Board();
 
-            //o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
-            ////b.Place(o);
-            //x.getMove(Arg.Any<string>()).Returns("A4");//shoots opponent at A4
-            ////b.Shoot(x);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.getOpponent().Returns(Player.O);
 
-            ////Assert.That(b.board["A4"].getState == Player.None);//check that position of shot cow is now empty
-            ////6
+            IPlayer o = Substitute.For<IPlayer>();
+            o.playerID.Returns(Player.O);
+            o.getOpponent().Returns(Player.X);
+
+            x.getMove(Arg.Any<string>()).Returns("A4", "A1");
+            b.Place(x, referee);
+            b.Place(x, referee);
+
+            Assert.That(b.numCows(x.playerID) == 2);
+
+            o.getMove(Arg.Any<string>()).Returns("A4");
+            b.Shoot(o, referee);
+
+            Assert.That(b.numCows(x.playerID) == 1);
         }
         [Test]
         public void WinIfOpponentCannotMove()
