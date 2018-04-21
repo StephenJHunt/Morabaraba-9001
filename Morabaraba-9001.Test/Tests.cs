@@ -13,12 +13,13 @@ namespace Morabaraba_9001.Test
         [Test]
         public void AtStartBoardIsEmpty()
         {
-            //IBoard b = new Board();
-            //var query =
-            //    from cell in b.board.Values
-            //    where cell.getState() != Player.None
-            //    select cell;
-            //Assert.That(!query.Any());
+            IBoard b = new Board();
+
+            var query =
+                from pos in Board.validPositions
+                where b.getCellState(pos) != Player.None
+                select pos;
+            Assert.That(!query.Any());
         }
         [Test]
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
