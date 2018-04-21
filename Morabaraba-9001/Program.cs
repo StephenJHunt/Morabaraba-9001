@@ -159,18 +159,25 @@ namespace Morabaraba_9001
             }
         }
 
-        public Player getCellState(string pos)
+        public virtual Player getCellState(string pos)
         {
             return board[pos].getState();
         }
 
-        public int numCows(Player player)
+        public virtual int numCows(Player player)
         {
-            IEnumerable<ICell> query =
-                from cell in board.Values.ToList()
-                where cell.getState() == player
-                select cell;
-            return query.Count();
+            int count = 0;
+            foreach (string pos in validPositions)
+            {
+                if (getCellState(pos) == player)
+                    count++;
+            }
+            return count;
+            //IEnumerable<ICell> query =
+            //    from cell in board.Values.ToList()
+            //    where cell.getState() == player
+            //    select cell;
+            //return query.Count();
         }
 
         public ICell getCell(string pos)
@@ -188,7 +195,7 @@ namespace Morabaraba_9001
             return neighbourList;
         }
 
-        public PlaceResult Place(IPlayer player, IRef referee)
+        public virtual PlaceResult Place(IPlayer player, IRef referee)
         {
             string placePos = player.getMove("Select place position: ");
             if (!referee.isValidPlacement(placePos, player, this))
@@ -203,7 +210,7 @@ namespace Morabaraba_9001
                 return PlaceResult.Done;
         }
 
-        public MoveResult Move(IPlayer player, IRef referee)
+        public virtual MoveResult Move(IPlayer player, IRef referee)
         {
             string piecePos = player.getMove("Enter piece to move: ");
             if (!referee.isValidPickUp(piecePos, player, this))
@@ -260,7 +267,7 @@ namespace Morabaraba_9001
             return true;
         }
 
-        public bool isInMill(string pos)
+        public virtual bool isInMill(string pos)
         {
             List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
             foreach (Player[] mill in relevantmills.Select(mill => mill.Select(getCellState).ToArray()).ToList())
