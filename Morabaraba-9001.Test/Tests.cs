@@ -24,21 +24,21 @@ namespace Morabaraba_9001.Test
         [Test]
         public void PlayerXStartsFirst()//Player X is our equivalent for the dark cows player
         {
-            //MorabarabaManager manager = new MorabarabaManager(new Board(), new GamePlayer(Player.X), new GamePlayer(Player.O), new MReferee());
-            //Assert.That(manager.currPlayer.playerID == Player.X);
+            MorabarabaManager manager = new MorabarabaManager(new Board(), new GamePlayer(Player.X), new GamePlayer(Player.O), new MReferee());
+            Assert.That(manager.currPlayer.playerID == Player.X);
         }
         [Test]
         public void CowsCanOnlyBePlayedOnEmptySpaces()
         {
-            //IRef referee = new MReferee();
-            
-            //IBoard b = Substitute.For<Board>();
-            //b.board["A1"] = new Cell(Player.O);
-            //b.board["A4"] = new Cell(Player.None);
-            //IPlayer x = Substitute.For<IPlayer>();
-            //x.playerID.Returns(Player.X);
-            //x.stones.Returns(12);
-            //Assert.That(!referee.isValidPlacement("A1", x, b) && referee.isValidPlacement("A4", x, b));
+            IRef referee = new MReferee();
+
+            IBoard b = Substitute.For<IBoard>();
+            b.getCellState("A1").Returns(Player.O);
+            b.getCellState("A4").Returns(Player.None);
+            IPlayer x = Substitute.For<IPlayer>();
+            x.playerID.Returns(Player.X);
+            x.stones.Returns(12);
+            Assert.That(!referee.isValidPlacement("A1", x, b) && referee.isValidPlacement("A4", x, b));
         }
         [Test]
         public void AMaximumOf12PlacementsPerPlayerAreAllowed()
