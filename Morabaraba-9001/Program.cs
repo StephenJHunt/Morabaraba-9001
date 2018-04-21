@@ -48,17 +48,15 @@ namespace Morabaraba_9001
 
     public interface IPlayer
     {
-        Player playerID { get; set; }
+        Player playerID { get;}
 
         string getMove(string prompt);
 
         Player getOpponent();
 
         int stones { get; }
-
         void reduceStones();
-
-        void setID(Player ID);
+        string ToString();
     }
 
     //public enum CellState { X, O, Empty }
@@ -401,44 +399,43 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
 
     public class GamePlayer : IPlayer
     {
+        private int numStones;
+        private Player gameplayerID;
+        public int stones => numStones;
+
         public GamePlayer(Player player)
         {
-            gameplayer = player;
+            gameplayerID = player;
             numStones = 12;
         }
-
-        public void setID(Player ID)
-        {
-            gameplayer = ID;
-        }
-
-        private int numStones;
-
-
-        private Player gameplayer;
-
-        public int stones => numStones;
+        
 
         public void reduceStones()
         {
             numStones--;
         }
 
-        //public Player playerID => gameplayer;
-
-        Player IPlayer.playerID { get => gameplayer; set => gameplayer = value; }
+        Player IPlayer.playerID { get => gameplayerID; }
 
         public Player getOpponent()
         {
-            if (this.gameplayer == Player.X)
+            if (gameplayerID == Player.X)
             {
                 return Player.O;
             }
-            else if (this.gameplayer == Player.O)
+            else if (gameplayerID == Player.O)
             {
                 return Player.X;
             }
             return Player.None;
+        }
+
+        public override string ToString()
+        {
+            if (gameplayerID == Player.X)
+                return "X";
+            else
+                return "O";
         }
 
         public string getMove(string prompt)
