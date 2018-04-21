@@ -4,6 +4,14 @@ using System.Linq;
 
 namespace Morabaraba_9001
 {
+    public enum Player { X, O, None }
+    public enum PlaceAction { Place, Shoot }
+    public enum PlaceResult { Invalid, MillMade, Done }
+    public enum ShootResult { Invalid, Done }
+    public enum MoveAction { Move, Shoot }
+    public enum MoveResult { InvalidPickUp, InvalidPutDown, MillMade, Done }
+    public enum GameResult { NotWon, Player1, Player2 }
+
     public interface IRef
     {
         bool isValidPlacement(string pos, IPlayer player, IBoard board);
@@ -59,14 +67,7 @@ namespace Morabaraba_9001
         string ToString();
     }
 
-    //public enum CellState { X, O, Empty }
-    public enum Player { X, O, None }
-    public enum PlaceAction {Place, Shoot}
-    public enum PlaceResult {Invalid, MillMade, Done}
-    public enum ShootResult {Invalid, Done}
-    public enum MoveAction {Move, Shoot}
-    public enum MoveResult {InvalidPickUp, InvalidPutDown, MillMade, Done}
-    public enum GameResult {NotWon, Player1, Player2}
+
     public interface IGameManager
     {
         void placingPhase();
@@ -271,7 +272,7 @@ namespace Morabaraba_9001
             return false;
         }
 
-        public string playerToString(Player player)
+        public string cellToString(Player player)
         {
             if (player == Player.O)
                 return "O";
@@ -283,7 +284,7 @@ namespace Morabaraba_9001
         public void Display(string extraDisplay)
         {
             Console.Clear();
-            string[] cells = board.Values.Select(cell => playerToString(cell.getState())).ToArray();
+            string[] cells = board.Values.Select(cell => cellToString(cell.getState())).ToArray();
             string dis =
                 $@"
     1   2  3   4   5  6   7
