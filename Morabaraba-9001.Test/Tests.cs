@@ -231,7 +231,8 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CowInMillWhenAllPlayerCowsInMillCanBeShot()
         {
-            IBoard b = new Board();
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
@@ -239,20 +240,17 @@ namespace Morabaraba_9001.Test
             o.playerID.Returns(Player.O);
             o.getOpponent().Returns(Player.X);
 
-            x.getMove(Arg.Any<string>()).Returns("A1");//placing an X piece for O to take
-            //b.Place(x);
+            b.getCellState("A1").Returns(Player.X);
+            b.getCellState("A4").Returns(Player.X);
+            b.getCellState("A7").Returns(Player.X);
+            b.isInMill("A1").Returns(true);
+            b.isInMill("A4").Returns(true);
+            b.isInMill("A7").Returns(true);
+            b.allInMill(x.playerID).Returns(true);
 
-            o.getMove(Arg.Any<string>()).Returns("G1", "G4", "G7", "A1");//Making O mill and shooting X at A1
-            //b.Place(o);
-            //b.Place(o);
-            //b.Place(o);
-
-            x.getMove(Arg.Any<string>()).Returns("G1");//get shoot input
-            //b.Shoot(x);
-
-            //Assert.That(b.board["G1"].getState == Player.None);//test that the cow in a mill could be shot and was
-
-            //3
+            Assert.That(referee.isValidShot("A1", o, b));
+            Assert.That(referee.isValidShot("A4", o, b));
+            Assert.That(referee.isValidShot("A7", o, b));
         }
         [Test]
         public void CannotShootOwnCows()//baka!
