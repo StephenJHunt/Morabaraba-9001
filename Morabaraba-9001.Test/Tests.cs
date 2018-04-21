@@ -2905,9 +2905,18 @@ namespace Morabaraba_9001.Test
         }
 
         [Test]
-        public void killmepls()
+        public void CellToStringReturnsDisplayableString()
         {
-
+            Board b = new Board();
+            string expectedX = "X";
+            string actualX = b.cellToString(Player.X);
+            string expectedO = "O";
+            string actualO = b.cellToString(Player.O);
+            string expectedNone = " ";
+            string actualNone = b.cellToString(Player.None);
+            Assert.That(expectedX == actualX);
+            Assert.That(expectedO == actualO);
+            Assert.That(expectedNone == actualNone);
         }
     }
 }
