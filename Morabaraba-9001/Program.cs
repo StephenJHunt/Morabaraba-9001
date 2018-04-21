@@ -34,8 +34,6 @@ namespace Morabaraba_9001
 
         List<ICell> getNeighbours(string pos);
 
-        ICell getCell(string pos);
-
         bool isMovable(string pos);
 
         bool isInMill(string pos);
@@ -174,7 +172,7 @@ namespace Morabaraba_9001
             return query.Count();
         }
 
-        public ICell getCell(string pos)
+        private ICell getCell(string pos)
         {
             return board[pos];
         }
