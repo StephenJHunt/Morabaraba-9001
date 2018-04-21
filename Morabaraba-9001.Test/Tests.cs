@@ -272,21 +272,19 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CannotShootEmptySpace()
         {
-            IBoard b = new Board();
+            IRef referee = new MReferee();
+            IBoard b = Substitute.For<IBoard>();
             IPlayer x = Substitute.For<IPlayer>();
             IPlayer o = Substitute.For<IPlayer>();
             x.playerID.Returns(Player.X);
             x.getOpponent().Returns(Player.O);
             o.playerID.Returns(Player.O);
             o.getOpponent().Returns(Player.X);
-            
-            o.getMove(Arg.Any<string>()).Returns("A4");//place opponent at A4
-            //b.Place(o);
-            x.getMove(Arg.Any<string>()).Returns("A1", "A4");//tries to shoot empty cell at A1 then shoots opponent at A4 to break out of loop
-            //b.Shoot(x);
 
-            //Assert.That(b.board["A1"].getState == Player.None && b.board["A4"].getState == Player.None);//check that A1 was untouched and player was able to still shoot an opponent at A4
-            //5
+            b.getCellState("A1").Returns(Player.None);
+            b.isInMill("A1").Returns(false);
+
+            Assert.That(!referee.isValidShot("A1", o, b));
         }
         [Test]
         public void ShotCowsRemovedFromBoard()
