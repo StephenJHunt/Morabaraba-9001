@@ -24,6 +24,7 @@ namespace Morabaraba_9001
     public interface IBoard
     {
         Player getCellState(string pos);
+        ICell getCell(string pos);
         int numCows(Player player);
 
         PlaceResult Place(IPlayer player, IRef referee);
@@ -32,7 +33,7 @@ namespace Morabaraba_9001
 
         ShootResult Shoot(IPlayer player, IRef referee);
 
-        List<ICell> getNeighbours(string pos);
+        List<Player> getNeighbours(string pos);
 
         bool isMovable(string pos);
 
@@ -172,17 +173,17 @@ namespace Morabaraba_9001
             return query.Count();
         }
 
-        private ICell getCell(string pos)
+        public ICell getCell(string pos)
         {
             return board[pos];
         }
 
-        public List<ICell> getNeighbours(string pos)
+        public List<Player> getNeighbours(string pos)
         {
-            List<ICell> neighbourList = new List<ICell>();
+            List<Player> neighbourList = new List<Player>();
             foreach (string npos in neighbours[pos])
             {
-                neighbourList.Add(getCell(npos));
+                neighbourList.Add(getCellState(npos));
             }
             return neighbourList;
         }
@@ -230,10 +231,10 @@ namespace Morabaraba_9001
 
         public bool isMovable(string pos)
         {
-            List<ICell> emptyNeighbours =
-                (from cell in getNeighbours(pos)
-                 where cell.getState() == Player.None
-                 select cell).ToList();
+            List<Player> emptyNeighbours =
+                (from cellState in getNeighbours(pos)
+                 where cellState == Player.None
+                 select cellState).ToList();
             return emptyNeighbours.Count > 0;
         }
 
@@ -262,10 +263,10 @@ namespace Morabaraba_9001
         public bool isInMill(string pos)
         {
             List<string[]> relevantmills = mills.Where(mill => mill.Contains(pos)).ToList();
-            foreach (ICell[] mill in relevantmills.Select(mill => mill.Select(getCell).ToArray()).ToList())
+            foreach (Player[] mill in relevantmills.Select(mill => mill.Select(getCellState).ToArray()).ToList())
             {
-                if ((mill[0].getState() == Player.X && mill[1].getState() == Player.X && mill[2].getState() == Player.X) ||
-                    (mill[0].getState() == Player.O && mill[1].getState() == Player.O && mill[2].getState() == Player.O))
+                if ((mill[0] == Player.X && mill[1] == Player.X && mill[2] == Player.X) ||
+                    (mill[0] == Player.O && mill[1] == Player.O && mill[2] == Player.O))
                 {
                     return true;
                 }
@@ -306,6 +307,8 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
             Console.WriteLine(extraDisplay);
             Console.WriteLine(dis);
         }
+
+
     }
 
     public class MorabarabaManager : IGameManager
