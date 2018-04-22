@@ -724,8 +724,7 @@ namespace Morabaraba_9001.Test
             new object[] {"G7", "F4", false},
             new object[] {"G7", "G1", false},
             new object[] {"G7", "G7", false}
-        };//THIS IS WHAT YOU WANTED 
-          //YOU MADE US DO THIS!!!!!!! </3
+        };//</3
         [Test]
         [TestCaseSource(nameof(ConnectedMoves))]
         public void ANormalCowCanOnlyMoveToAConnectedSpace(string pos, string neighbour, bool expected)
@@ -1921,7 +1920,6 @@ namespace Morabaraba_9001.Test
             new object[] {"G7", "G7", Player.None, true}
         };
         //Why so thorough?
-        //Y U Do this?? TwT
 
         [Test]
         [TestCaseSource(nameof(EmptyMoves))]
@@ -2907,13 +2905,18 @@ namespace Morabaraba_9001.Test
         [Test]
         public void CellToStringReturnsDisplayableString()
         {
-            Board b = new Board();
+            ICell cell = new Cell(Player.X);
             string expectedX = "X";
-            string actualX = b.cellToString(Player.X);
+            string actualX = cell.ToString();
+
+            ICell cell2 = new Cell(Player.O);
             string expectedO = "O";
-            string actualO = b.cellToString(Player.O);
+            string actualO = cell2.ToString();
+
+            ICell cell3 = new Cell(Player.None);
             string expectedNone = " ";
-            string actualNone = b.cellToString(Player.None);
+            string actualNone = cell3.ToString();
+
             Assert.That(expectedX == actualX);
             Assert.That(expectedO == actualO);
             Assert.That(expectedNone == actualNone);
