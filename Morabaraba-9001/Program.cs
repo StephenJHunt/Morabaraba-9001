@@ -50,7 +50,7 @@ namespace Morabaraba_9001
     public interface ICell
     {
         Player getState();
-
+        string ToString();
         void changeState(Player changedState);
     }
 
@@ -90,6 +90,15 @@ namespace Morabaraba_9001
         public void changeState(Player changedState)
         {
             state = changedState;
+        }
+
+        public override string ToString()
+        {
+            if (state == Player.O)
+                return "O";
+            else if (state == Player.X)
+                return "X";
+            return " ";
         }
     }
 
@@ -287,19 +296,12 @@ namespace Morabaraba_9001
             return false;
         }
 
-        public string cellToString(Player player)
-        {
-            if (player == Player.O)
-                return "O";
-            else if (player == Player.X)
-                return "X";
-            return " ";
-        }
+        
 
         public void Display(string extraDisplay)
         {
             Console.Clear();
-            string[] cells = board.Values.Select(cell => cellToString(cell.getState())).ToArray();
+            string[] cells = board.Values.Select(cell => cell.ToString()).ToArray();
             string dis =
                 $@"
     1   2  3   4   5  6   7
