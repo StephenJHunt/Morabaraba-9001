@@ -244,7 +244,7 @@ namespace Morabaraba_9001
 
         public ShootResult Shoot(IPlayer player, IRef referee)
         {
-            string shootPos = player.getMove("Enter a position to shoot");
+            string shootPos = player.getMove("Enter a position to shoot: ");
             if (!referee.isValidShot(shootPos, player, this))
                 return ShootResult.Invalid;
             board[shootPos].changeState(Player.None);
@@ -344,7 +344,7 @@ G   {cells[21]}----------{cells[22]}----------{cells[23]} ";
         public void placingPhase()
         {
             PlaceAction act = PlaceAction.Place;
-            while (referee.inPlacing(xPlayer, oPlayer))
+            while (referee.inPlacing(xPlayer, oPlayer) || act == PlaceAction.Shoot)
             {
                 gameBoard.Display($@"X stones:{xPlayer.stones} O stones:{oPlayer.stones}");
                 if (act == PlaceAction.Place)
